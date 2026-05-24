@@ -19,11 +19,13 @@ export default function AdminLogin() {
       localStorage.setItem('admin_token', response.data.token);
       navigate('/admin');
     } catch (err: unknown) {
-      if (typeof err === 'object' && err !== null && 'response' in err) {
+      if (typeof err === 'object' && err !== null && 'response' in err && (err as any).response) {
         const axiosError = err as { response?: { data?: { message?: string } } };
-        setError(axiosError.response?.data?.message || 'Failed to login');
+        setError(axiosError.response?.data?.message || 'Invalid credentials');
+      } else if (err instanceof Error && err.message === 'Network Error') {
+        setError('Cannot connect to server. Is the backend running?');
       } else {
-        setError('Failed to login');
+        setError('Failed to connect to the server');
       }
     } finally {
       setLoading(false);

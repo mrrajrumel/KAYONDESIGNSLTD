@@ -11,6 +11,7 @@ import Terms from './pages/Terms';
 import AdminLogin from './pages/Admin/AdminLogin';
 import AdminLayout from './layouts/AdminLayout';
 import ProtectedRoute from './components/Admin/ProtectedRoute';
+import { Toaster } from 'react-hot-toast';
 
 function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -25,6 +26,7 @@ function MainLayout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <Router>
+      <Toaster position="top-right" />
       <Routes>
         {/* Public Routes - Use MainLayout with public Navbar/Footer */}
         <Route path="/" element={<MainLayout><Home /></MainLayout>} />

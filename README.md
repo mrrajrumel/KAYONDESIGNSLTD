@@ -99,8 +99,11 @@ DB_PASSWORD=your_password
 - *Note: This URL is deliberately obfuscated to prevent automated brute-force attacks on standard paths like `/admin` or `/login`.*
 
 ## 13. Admin Setup Instructions
-- **How to create the first admin:** Run `php artisan db:seed --class=AdminSeeder` in the backend directory. This will generate the primary Super Admin account.
-- **Future Admins:** Must be created *exclusively* from within the backend dashboard by the Super Admin. There is no public registration page for admins.
+- **How to create the first admin:** Run `php artisan db:seed --class=AdminSeeder` in the backend directory. This will generate the primary testing Super Admin account.
+- **Default Credentials:**
+  - Email: `Rajrum3l@gmail.com`
+  - Password: `123456`
+- **Future Admins:** Must be created *exclusively* from within the backend dashboard by the Super Admin using the Future Admin Management System. There is no public registration page for admins.
 
 ## 14. Role Permission System
 The system utilizes a strict RBAC (Role-Based Access Control) architecture:

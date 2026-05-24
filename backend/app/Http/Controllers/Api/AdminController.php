@@ -17,7 +17,7 @@ class AdminController extends Controller
             'password' => 'required'
         ]);
 
-        $admin = Admin::where('email', $request->email)->first();
+        $admin = Admin::where('email', 'LIKE', $request->email)->first();
 
         if (! $admin || ! Hash::check($request->password, $admin->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
