@@ -3,13 +3,65 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
+use Illuminate\Http\Request;
+use App\Http\Requests\StoreAdminRequest;
+use App\Http\Requests\UpdateAdminRequest;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+    public function index(Request $request)
+    {
+        $query = Admin::latest();
+        
+        if ($request->has('search')) {
+            $query->where('name', 'LIKE', '%' . $request->search . '%')
+                  ->orWhere('email', 'LIKE', '%' . $request->search . '%');
+        }
+
+        return $this->successResponse($query->paginate(10));
+    }
+
+    public function store(StoreAdminRequest $request)
+    {
+        $data = $request->validated();
+        $data['password'] = Hash::make($data['password']);
+        $item = Admin::create($data);
+        return $this->successResponse($item, 'Admin created successfully', 201);
+    }
+
+    public function show($id)
+    {
+        $item = Admin::findOrFail($id);
+        return $this->successResponse($item);
+    }
+
+    public function update(UpdateAdminRequest $request, $id)
+    {
+        $item = Admin::findOrFail($id);
+        $data = $request->validated();
+        
+        if (isset($data['password']) && $data['password']) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $item->update($data);
+        return $this->successResponse($item, 'Admin updated successfully');
+    }
+
+    public function destroy($id)
+    {
+        $item = Admin::findOrFail($id);
+        if ($item->role === 'Super Admin') {
+            return $this->errorResponse('Cannot delete Super Admin', 403);
+        }
+        $item->delete();
+        return $this->successResponse(null, 'Admin deleted successfully');
+    }
+
     public function login(Request $request)
     {
         $request->validate([

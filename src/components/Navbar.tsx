@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronRight, Phone, Mail } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useSettingsStore } from '../store/useSettingsStore';
+import api from '../services/api';
 
 const navLinks = [
   { id: '/', label: 'Home' },
@@ -11,19 +13,34 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const location = useLocation();
-  const currentPage = location.pathname;
+  const { logo, siteName } = useSettingsStore();
+  const [menuItems, setMenuItems] = useState<any[]>([]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+
+    // Fetch dynamic menu
+    api.get('/menus/header').then(res => {
+      if (res.data.data) setMenuItems(res.data.data.items || []);
+    }).catch(() => {
+      // Fallback to static if API fails
+      setMenuItems([
+        { label: 'Home', url: '/' },
+        { label: 'Services', url: '/services' },
+        { label: 'Planning', url: '/planning' },
+        { label: 'About', url: '/about' },
+        { label: 'Contact', url: '/contact' },
+      ]);
+    });
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleNav = () => {
-    setMenuOpen(false);
+    setIsOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -40,32 +57,32 @@ export default function Navbar() {
           className="flex items-center gap-2 group"
           aria-label="Kayon Designs Ltd Home"
         >
-          <div className="flex flex-col leading-none">
-            <span className="font-bold text-xl tracking-tight text-primary">
-              kayon
-            </span>
-            <span className="text-[9px] font-semibold tracking-[0.2em] text-on-surface-variant uppercase">
-              designs ltd
-            </span>
+          <img src={logo || "/logo.png"} alt={siteName} className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-105" />
+          <div className="flex flex-col">
+            <span className="text-xl md:text-2xl font-black tracking-tighter text-primary leading-none">{siteName.split(' ')[0]}</span>
+            <span className="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase leading-none">{siteName.split(' ').slice(1).join(' ')}</span>
           </div>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8" aria-label="Main navigation">
-          {navLinks.map((link) => (
+        {/* Desktop Nav */}
+        <div className="hidden lg:flex items-center gap-8">
+          {menuItems.map((item) => (
             <Link
-              key={link.id}
-              to={link.id}
-              onClick={handleNav}
-              className={`text-sm font-medium transition-colors pb-1 ${
-                currentPage === link.id
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-on-surface-variant hover:text-primary'
-              }`}
+              key={item.label}
+              to={item.url}
+              target={item.is_external ? "_blank" : undefined}
+              className="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors uppercase tracking-widest"
             >
-              {link.label}
+              {item.label}
             </Link>
           ))}
-        </nav>
+          <Link
+            to="/contact"
+            className="bg-primary text-on-primary px-8 py-3 text-xs font-black tracking-[0.15em] uppercase hover:opacity-90 transition-all shadow-lg shadow-primary/20"
+          >
+            Get Started
+          </Link>
+        </div>
 
         <div className="flex items-center gap-3">
           <Link
@@ -77,10 +94,10 @@ export default function Navbar() {
           </Link>
           <button
             className="md:hidden text-on-surface p-1"
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
@@ -88,20 +105,19 @@ export default function Navbar() {
       {/* Mobile Nav */}
       <div
         className={`md:hidden absolute top-20 left-0 w-full bg-surface shadow-md transition-all duration-300 overflow-hidden ${
-          menuOpen ? 'max-h-96 border-b border-outline-variant/30' : 'max-h-0'
+          isOpen ? 'max-h-96 border-b border-outline-variant/30' : 'max-h-0'
         }`}
       >
         <nav className="flex flex-col px-6 py-4 gap-4">
-          {navLinks.map((link) => (
+          {menuItems.map((item) => (
             <Link
-              key={link.id}
-              to={link.id}
-              onClick={handleNav}
-              className={`text-base font-medium py-2 ${
-                currentPage === link.id ? 'text-primary' : 'text-on-surface'
-              }`}
+              key={item.label}
+              to={item.url}
+              target={item.is_external ? "_blank" : undefined}
+              onClick={() => setIsOpen(false)}
+              className="text-2xl font-black text-primary uppercase tracking-tighter hover:text-secondary transition-colors"
             >
-              {link.label}
+              {item.label}
             </Link>
           ))}
           <Link

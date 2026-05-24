@@ -5,20 +5,26 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = Category::latest()->paginate(10);
-        return $this->successResponse($items);
+        $query = Category::orderBy('order');
+        
+        if ($request->has('search')) {
+            $query->where('title', 'LIKE', '%' . $request->search . '%');
+        }
+
+        return $this->successResponse($query->get());
     }
 
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $data = $request->all();
-        $item = Category::create($data);
-        return $this->successResponse($item, 'Created successfully', 201);
+        $item = Category::create($request->validated());
+        return $this->successResponse($item, 'Category created successfully', 201);
     }
 
     public function show($id)
@@ -27,11 +33,11 @@ class CategoryController extends Controller
         return $this->successResponse($item);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateCategoryRequest $request, $id)
     {
         $item = Category::findOrFail($id);
-        $item->update($request->all());
-        return $this->successResponse($item, 'Updated successfully');
+        $item->update($request->validated());
+        return $this->successResponse($item, 'Category updated successfully');
     }
 
     public function destroy($id)
@@ -39,11 +45,5 @@ class CategoryController extends Controller
         $item = Category::findOrFail($id);
         $item->delete();
         return $this->successResponse(null, 'Deleted successfully');
-    }
-
-    public function indexPublic()
-    {
-        $items = Category::where('status', true)->orderBy('order')->get();
-        return $this->successResponse($items);
     }
 }

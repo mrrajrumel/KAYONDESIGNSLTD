@@ -5,33 +5,43 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\WorkShowcase;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreShowcaseRequest;
+use App\Http\Requests\UpdateShowcaseRequest;
 
 class WorkShowcaseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = WorkShowcase::latest()->paginate(10);
-        return $this->successResponse($items);
+        $query = WorkShowcase::with('category')->latest();
+        
+        if ($request->has('search')) {
+            $query->where('title', 'LIKE', '%' . $request->search . '%');
+        }
+
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        return $this->successResponse($query->paginate(10));
     }
 
-    public function store(Request $request)
+    public function store(StoreShowcaseRequest $request)
     {
-        $data = $request->all();
-        $item = WorkShowcase::create($data);
-        return $this->successResponse($item, 'Created successfully', 201);
+        $item = WorkShowcase::create($request->validated());
+        return $this->successResponse($item, 'Project added successfully', 201);
     }
 
     public function show($id)
     {
-        $item = WorkShowcase::findOrFail($id);
+        $item = WorkShowcase::with('category')->findOrFail($id);
         return $this->successResponse($item);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateShowcaseRequest $request, $id)
     {
         $item = WorkShowcase::findOrFail($id);
-        $item->update($request->all());
-        return $this->successResponse($item, 'Updated successfully');
+        $item->update($request->validated());
+        return $this->successResponse($item, 'Project updated successfully');
     }
 
     public function destroy($id)

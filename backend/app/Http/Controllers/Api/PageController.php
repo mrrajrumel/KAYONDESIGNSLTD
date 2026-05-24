@@ -5,33 +5,39 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
 use Illuminate\Http\Request;
+use App\Http\Requests\StorePageRequest;
+use App\Http\Requests\UpdatePageRequest;
 
 class PageController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = Page::latest()->paginate(10);
-        return $this->successResponse($items);
+        $query = Page::latest();
+        
+        if ($request->has('search')) {
+            $query->where('title', 'LIKE', '%' . $request->search . '%');
+        }
+
+        return $this->successResponse($query->paginate(10));
     }
 
-    public function store(Request $request)
+    public function store(StorePageRequest $request)
     {
-        $data = $request->all();
-        $item = Page::create($data);
-        return $this->successResponse($item, 'Created successfully', 201);
+        $item = Page::create($request->validated());
+        return $this->successResponse($item, 'Page created successfully', 201);
     }
 
     public function show($id)
     {
-        $item = Page::findOrFail($id);
+        $item = Page::with('sections')->findOrFail($id);
         return $this->successResponse($item);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdatePageRequest $request, $id)
     {
         $item = Page::findOrFail($id);
-        $item->update($request->all());
-        return $this->successResponse($item, 'Updated successfully');
+        $item->update($request->validated());
+        return $this->successResponse($item, 'Page updated successfully');
     }
 
     public function destroy($id)

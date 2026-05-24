@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\WidgetController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\SeoSettingController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\ActivityLogController;
 
 Route::post('/auth/login', [AdminController::class, 'login']);
 
@@ -42,6 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('media', MediaController::class);
     Route::apiResource('contact-messages', ContactController::class)->except(['store']);
     Route::put('/contact-messages/{id}/read', [ContactController::class, 'markAsRead']);
+    
+    Route::get('/activity-logs', [ActivityLogController::class, 'index']);
     
     Route::get('/settings', [SettingController::class, 'index']);
     Route::put('/settings', [SettingController::class, 'update']);

@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, Settings, Image as ImageIcon, Users, LogOut, Menu as MenuIcon, Briefcase, Mail } from 'lucide-react';
+import { LayoutDashboard, FileText, Settings, Image as ImageIcon, Users, LogOut, Menu as MenuIcon, Briefcase, Mail, List, History } from 'lucide-react';
 import api from '../services/api';
 import DashboardOverview from '../pages/Admin/DashboardOverview';
 import PageManager from '../pages/Admin/PageManager';
 import ShowcaseManager from '../pages/Admin/ShowcaseManager';
+import CategoryManager from '../pages/Admin/CategoryManager';
+import UserManager from '../pages/Admin/UserManager';
 import MediaManager from '../pages/Admin/MediaManager';
 import MessageManager from '../pages/Admin/MessageManager';
 import SettingsManager from '../pages/Admin/SettingsManager';
+import ActivityLogManager from '../pages/Admin/ActivityLogManager';
+import MenuManager from '../pages/Admin/MenuManager';
 
 export default function AdminLayout() {
   const navigate = useNavigate();
@@ -28,10 +32,13 @@ export default function AdminLayout() {
   const navItems = [
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
     { name: 'Pages', path: '/admin/pages', icon: FileText },
+    { name: 'Menus', path: '/admin/menus', icon: MenuIcon },
+    { name: 'Categories', path: '/admin/categories', icon: List },
     { name: 'Showcases', path: '/admin/showcases', icon: Briefcase },
     { name: 'Media', path: '/admin/media', icon: ImageIcon },
     { name: 'Messages', path: '/admin/messages', icon: Mail },
     { name: 'Admins', path: '/admin/users', icon: Users },
+    { name: 'Activity Logs', path: '/admin/logs', icon: History },
     { name: 'Settings', path: '/admin/settings', icon: Settings },
   ];
 
@@ -85,11 +92,14 @@ export default function AdminLayout() {
           <Routes>
             <Route path="/" element={<DashboardOverview />} />
             <Route path="/pages" element={<PageManager />} />
+            <Route path="/menus" element={<MenuManager />} />
+            <Route path="/categories" element={<CategoryManager />} />
             <Route path="/showcases" element={<ShowcaseManager />} />
             <Route path="/media" element={<MediaManager />} />
             <Route path="/messages" element={<MessageManager />} />
             <Route path="/settings" element={<SettingsManager />} />
-            <Route path="/users" element={<div className="bg-white p-6 rounded shadow-sm border border-gray-100">Admin User Management Coming Soon</div>} />
+            <Route path="/users" element={<UserManager />} />
+            <Route path="/logs" element={<ActivityLogManager />} />
           </Routes>
         </div>
       </main>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../services/api';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ImageIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function WorkShowcaseSection() {
@@ -21,10 +21,15 @@ export default function WorkShowcaseSection() {
   }, []);
 
   const filteredShowcases = activeCategory 
-    ? showcases.filter(item => item.category_id === activeCategory)
+    ? showcases.filter(item => item.category_id === Number(activeCategory))
     : showcases;
 
-  if (loading) return <div className="py-20 text-center">Loading portfolio...</div>;
+  if (loading) return (
+    <div className="py-24 text-center space-y-4">
+      <div className="animate-spin w-10 h-10 border-4 border-primary border-t-transparent rounded-full mx-auto" />
+      <p className="text-on-surface-variant font-medium">Loading portfolio...</p>
+    </div>
+  );
 
   return (
     <section className="py-24 bg-surface relative">
@@ -61,18 +66,29 @@ export default function WorkShowcaseSection() {
         {/* Showcase Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredShowcases.map(item => (
-            <div key={item.id} className="group relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all">
-              <div className="aspect-[4/3] overflow-hidden bg-gray-100">
+            <div key={item.id} className="group relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all border border-outline-variant">
+              <div className="aspect-[4/3] overflow-hidden bg-gray-100 relative">
                 {item.featured_image ? (
                   <img src={item.featured_image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
+                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
+                    <ImageIcon size={48} className="mb-2 opacity-20" />
+                    <span className="text-xs font-bold uppercase tracking-widest opacity-40">No Image Preview</span>
+                  </div>
+                )}
+                {item.is_featured && (
+                  <div className="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-lg">
+                    Featured
+                  </div>
                 )}
               </div>
               <div className="p-6">
-                <span className="text-sm font-semibold text-secondary mb-2 block uppercase tracking-wider">{item.category?.title}</span>
-                <h3 className="text-xl font-bold text-primary mb-3">{item.title}</h3>
-                <p className="text-on-surface-variant line-clamp-2">{item.description}</p>
+                <span className="text-[10px] font-bold text-secondary mb-2 block uppercase tracking-[0.2em]">{item.category?.title || 'General'}</span>
+                <h3 className="text-xl font-bold text-primary mb-3 leading-tight">{item.title}</h3>
+                <p className="text-sm text-on-surface-variant line-clamp-2 leading-relaxed mb-6">{item.description}</p>
+                <Link to="/planning" className="inline-flex items-center gap-2 text-xs font-black text-primary uppercase tracking-widest hover:gap-3 transition-all">
+                  Project Details <ArrowRight size={14} />
+                </Link>
               </div>
             </div>
           ))}
