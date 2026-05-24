@@ -21,7 +21,7 @@ Route::post('/auth/login', [AdminController::class, 'login']);
 Route::get('/pages', [PageController::class, 'indexPublic']);
 Route::get('/pages/{slug}', [PageController::class, 'showPublic']);
 Route::get('/settings/public', [SettingController::class, 'publicSettings']);
-Route::post('/contact', [ContactController::class, 'submit']);
+Route::post('/contact', [ContactController::class, 'store']); // Use store method for public submission
 Route::get('/showcases', [WorkShowcaseController::class, 'indexPublic']);
 Route::get('/categories', [CategoryController::class, 'indexPublic']);
 Route::get('/menus/{location}', [MenuController::class, 'showPublic']);

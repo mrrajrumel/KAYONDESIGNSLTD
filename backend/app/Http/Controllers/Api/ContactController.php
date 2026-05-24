@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreContactMessageRequest;
 
 class ContactController extends Controller
 {
@@ -14,11 +15,12 @@ class ContactController extends Controller
         return $this->successResponse($items);
     }
 
-    public function store(Request $request)
+    public function store(StoreContactMessageRequest $request)
     {
-        $data = $request->all();
-        $item = ContactMessage::create($data);
-        return $this->successResponse($item, 'Created successfully', 201);
+        $validatedData = $request->validated();
+        $item = ContactMessage::create($validatedData);
+
+        return $this->successResponse($item, 'Your message has been received. We will get back to you shortly.', 201);
     }
 
     public function show($id)

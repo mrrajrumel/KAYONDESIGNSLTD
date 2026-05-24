@@ -1,62 +1,50 @@
-import { useState, useRef, useEffect } from 'react';
-import { MapPin, Phone, Mail, Send, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Phone, Mail, MapPin } from 'lucide-react';
+import SEO from '../components/SEO';
+import { useState } from 'react';
+import api from '../services/api';
+import toast from 'react-hot-toast';
 
-function useReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add('opacity-100', 'translate-y-0');
-          el.classList.remove('opacity-0', 'translate-y-6');
-          obs.unobserve(el);
-        }
-      },
-      { threshold: 0.1 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return ref;
-}
-
-const services = [
-  'Construction Logistics Plan (CLP)',
-  'Swept Path Analysis',
-  'Access Plan',
-  'Traffic Management Plan',
-  'Tender Support',
-  'Other / Not Sure',
+const contactDetails = [
+  { icon: MapPin, text: 'London, United Kingdom' },
 ];
 
 export default function Contact() {
-  const [submitted, setSubmitted] = useState(false);
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     name: '',
-    company: '',
     email: '',
-    phone: '',
-    service: '',
+    subject: '',
     message: '',
   });
+  const [loading, setLoading] = useState(false);
 
-  const heroRef = useReveal();
-  const formRef = useReveal();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    toast.loading('Sending message...', { id: 'contact-toast' });
+    try {
+      const response = await api.post('/contact', formData);
+      toast.success(response.data.message, { id: 'contact-toast' });
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (err: any) {
+      if (err.response?.data?.errors) {
+        const errors = Object.values(err.response.data.errors).flat();
+        toast.error(errors.join('\n') || 'Please check your input.', { id: 'contact-toast' });
+      } else {
+        toast.error('An unknown error occurred.', { id: 'contact-toast' });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <main className="pt-20">
-      {/* Hero */}
+    <main className="pt-20 bg-surface">
+      <SEO title="Contact Us" description="Get in touch with Kayon Designs for expert construction logistics planning and support." />
+      {/* Contact Header */}
       <section className="relative bg-surface-container-lowest border-b border-outline-variant overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -69,7 +57,6 @@ export default function Contact() {
           </svg>
         </div>
         <div
-          ref={heroRef}
           className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-xl text-center relative z-10 opacity-0 translate-y-6 transition-all duration-700"
         >
           <div className="inline-flex items-center px-3 py-1 bg-secondary-container text-on-secondary-container text-xs font-semibold tracking-widest uppercase mb-4">
@@ -78,18 +65,13 @@ export default function Contact() {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-4 leading-tight">
             Let's Talk About<br />Your Project.
           </h1>
-          <p className="text-lg text-on-surface-variant max-w-xl mx-auto">
-            Tell us about your development and we'll put together a tailored logistics proposal. No jargon — just a straightforward conversation.
-          </p>
+          <p className="text-lg text-on-surface-variant max-w-lg mt-4">We are here to help with your project needs. Fill out the form below, and we will get back to you as soon as possible.</p>
         </div>
       </section>
 
       {/* Contact Section */}
       <section className="py-xl bg-surface">
-        <div
-          ref={formRef}
-          className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop grid md:grid-cols-5 gap-lg opacity-0 translate-y-6 transition-all duration-700"
-        >
+        <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop grid md:grid-cols-5 gap-lg opacity-0 translate-y-6 transition-all duration-700">
           {/* Info */}
           <div className="md:col-span-2 space-y-md">
             <div>
@@ -163,7 +145,7 @@ export default function Contact() {
 
           {/* Form */}
           <div className="md:col-span-3">
-            {submitted ? (
+            {loading ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-xl border border-outline-variant bg-surface-container-low min-h-[400px]">
                 <div className="w-16 h-16 flex items-center justify-center bg-secondary-container text-secondary mb-4">
                   <CheckCircle2 size={32} />
@@ -174,117 +156,54 @@ export default function Contact() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4 border border-outline-variant p-md bg-surface-container-lowest">
-                <h3 className="text-xl font-bold text-primary mb-2">Send Us a Message</h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="name" className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Full Name *
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      value={form.name}
-                      onChange={handleChange}
-                      className="w-full border border-outline-variant bg-surface px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="company" className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Company
-                    </label>
-                    <input
-                      id="company"
-                      name="company"
-                      type="text"
-                      value={form.company}
-                      onChange={handleChange}
-                      className="w-full border border-outline-variant bg-surface px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
-                      placeholder="Your company"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="email" className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Email Address *
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      value={form.email}
-                      onChange={handleChange}
-                      className="w-full border border-outline-variant bg-surface px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="phone" className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Phone Number
-                    </label>
-                    <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      value={form.phone}
-                      onChange={handleChange}
-                      className="w-full border border-outline-variant bg-surface px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
-                      placeholder="+44 ..."
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="service" className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                    Service Required
-                  </label>
-                  <select
-                    id="service"
-                    name="service"
-                    value={form.service}
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Your Name"
+                    value={formData.name}
                     onChange={handleChange}
-                    className="w-full border border-outline-variant bg-surface px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
-                  >
-                    <option value="">Select a service...</option>
-                    {services.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                    Project Details *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
                     required
-                    rows={5}
-                    value={form.message}
+                    className="w-full px-4 py-3 rounded border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Your Email"
+                    value={formData.email}
                     onChange={handleChange}
-                    className="w-full border border-outline-variant bg-surface px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-primary transition-colors resize-none"
-                    placeholder="Tell us about your project — location, scale, timeline, and what you need help with..."
+                    required
+                    className="w-full px-4 py-3 rounded border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                   />
                 </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-primary text-on-primary py-3 font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-                >
-                  Send Message <Send size={16} />
-                </button>
-
-                <p className="text-xs text-on-surface-variant text-center">
-                  We respect your privacy. Your details will only be used to respond to your enquiry.
-                </p>
+                <input
+                  type="text"
+                  name="subject"
+                  placeholder="Subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 rounded border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                />
+                <textarea
+                  name="message"
+                  rows={6}
+                  placeholder="Your Message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 rounded border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                />
+                <div className="text-right">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="inline-flex items-center gap-2 justify-center px-8 py-3 rounded text-sm font-bold text-on-primary bg-primary hover:opacity-90 focus:outline-none transition-opacity disabled:opacity-50"
+                  >
+                    {loading ? 'Sending...' : 'Send Message'} <ArrowRight size={18} />
+                  </button>
+                </div>
               </form>
             )}
           </div>
