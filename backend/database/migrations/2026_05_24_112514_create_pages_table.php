@@ -1,20 +1,33 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-    public function up(): void {
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
         Schema::create('pages', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('content')->nullable();
-            $table->string('status')->default('published'); // draft, published
-            $table->foreignId('author_id')->constrained('admins')->nullOnDelete();
+            $table->string('status')->default('draft'); // draft, published
+            $table->boolean('is_home')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
     }
-    public function down(): void { Schema::dropIfExists('pages'); }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('pages');
+    }
 };

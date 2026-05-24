@@ -11,10 +11,10 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         Admin::create([
-            'name' => 'Super Admin',
-            'username' => 'superadmin',
-            'email' => 'admin@kayondesigns.com',
-            'password' => Hash::make('KayonAdmin!2026'),
+            'name' => 'Raj Rumel',
+            'username' => 'rajrumel',
+            'email' => 'Rajrum3l@gmail.com',
+            'password' => Hash::make('123456'),
             'role' => 'Super Admin',
             'permissions' => json_encode(['all']),
             'is_active' => true,
