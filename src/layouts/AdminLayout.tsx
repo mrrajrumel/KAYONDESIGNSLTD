@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, Settings, Image as ImageIcon, Users, LogOut, Menu as MenuIcon } from 'lucide-react';
+import { LayoutDashboard, FileText, Settings, Image as ImageIcon, Users, LogOut, Menu as MenuIcon, Briefcase, Mail } from 'lucide-react';
 import api from '../services/api';
+import DashboardOverview from '../pages/Admin/DashboardOverview';
+import PageManager from '../pages/Admin/PageManager';
+import ShowcaseManager from '../pages/Admin/ShowcaseManager';
+import MediaManager from '../pages/Admin/MediaManager';
+import MessageManager from '../pages/Admin/MessageManager';
+import SettingsManager from '../pages/Admin/SettingsManager';
 
 export default function AdminLayout() {
   const navigate = useNavigate();
@@ -22,7 +28,9 @@ export default function AdminLayout() {
   const navItems = [
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
     { name: 'Pages', path: '/admin/pages', icon: FileText },
+    { name: 'Showcases', path: '/admin/showcases', icon: Briefcase },
     { name: 'Media', path: '/admin/media', icon: ImageIcon },
+    { name: 'Messages', path: '/admin/messages', icon: Mail },
     { name: 'Admins', path: '/admin/users', icon: Users },
     { name: 'Settings', path: '/admin/settings', icon: Settings },
   ];
@@ -70,15 +78,17 @@ export default function AdminLayout() {
       <main className="flex-1 flex flex-col min-h-screen ml-20 md:ml-0 transition-all duration-300">
         <header className="h-16 bg-white shadow-sm flex items-center px-6 sticky top-0 z-10">
           <h2 className="text-xl font-semibold text-gray-800 capitalize">
-            {location.pathname.split('/').pop() || 'Dashboard'}
+            {location.pathname === '/admin' ? 'Dashboard' : location.pathname.split('/').pop()}
           </h2>
         </header>
         <div className="flex-1 p-6 overflow-auto">
           <Routes>
-            <Route path="/" element={<div className="bg-white p-6 rounded shadow-sm border border-gray-100"><h3 className="font-semibold text-lg">Dashboard Overview</h3><p className="mt-2 text-gray-600">Welcome to Kayon Designs CMS.</p></div>} />
-            <Route path="/pages" element={<div className="bg-white p-6 rounded shadow-sm border border-gray-100">Page Builder Coming Soon</div>} />
-            <Route path="/settings" element={<div className="bg-white p-6 rounded shadow-sm border border-gray-100">Settings UI Coming Soon</div>} />
-            <Route path="/media" element={<div className="bg-white p-6 rounded shadow-sm border border-gray-100">Media Manager Coming Soon</div>} />
+            <Route path="/" element={<DashboardOverview />} />
+            <Route path="/pages" element={<PageManager />} />
+            <Route path="/showcases" element={<ShowcaseManager />} />
+            <Route path="/media" element={<MediaManager />} />
+            <Route path="/messages" element={<MessageManager />} />
+            <Route path="/settings" element={<SettingsManager />} />
             <Route path="/users" element={<div className="bg-white p-6 rounded shadow-sm border border-gray-100">Admin User Management Coming Soon</div>} />
           </Routes>
         </div>

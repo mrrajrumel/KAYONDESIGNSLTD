@@ -3,47 +3,48 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ContactMessage;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $items = ContactMessage::latest()->paginate(10);
+        return $this->successResponse($items);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $item = ContactMessage::create($data);
+        return $this->successResponse($item, 'Created successfully', 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $item = ContactMessage::findOrFail($id);
+        return $this->successResponse($item);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $item = ContactMessage::findOrFail($id);
+        $item->update($request->all());
+        return $this->successResponse($item, 'Updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function markAsRead($id)
     {
-        //
+        $item = ContactMessage::findOrFail($id);
+        $item->update(['is_read' => true]);
+        return $this->successResponse($item, 'Marked as read');
+    }
+
+    public function destroy($id)
+    {
+        $item = ContactMessage::findOrFail($id);
+        $item->delete();
+        return $this->successResponse(null, 'Deleted successfully');
     }
 }

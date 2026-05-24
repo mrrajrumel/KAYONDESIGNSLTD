@@ -13,6 +13,8 @@ import {
   Target,
   TrendingUp,
 } from 'lucide-react';
+import WorkShowcaseSection from '../components/WorkShowcaseSection';
+import SEO from '../components/SEO';
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -93,6 +95,7 @@ export default function Home() {
 
   return (
     <main className="pt-20">
+      <SEO title="Construction Logistics & Planning" description="Strategic logistics planning that supports project success from the start. We bridge the gap between architectural vision and buildable reality." />
       {/* Hero */}
       <section className="relative min-h-[88vh] flex items-center bg-surface-container-lowest overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -176,8 +179,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Services */}
-      <section className="py-xl bg-surface">
+      {/* Dynamic Work Showcase Section */}
+      <WorkShowcaseSection />
+
+      {/* Services Overview */}
+      <section ref={servicesRef} className="py-24 bg-white opacity-0 translate-y-6 transition-all duration-700">
         <div
           ref={servicesRef}
           className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop opacity-0 translate-y-6 transition-all duration-700"

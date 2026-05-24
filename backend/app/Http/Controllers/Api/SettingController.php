@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\WebsiteSetting;
 
 class SettingController extends Controller
 {
@@ -12,7 +13,8 @@ class SettingController extends Controller
      */
     public function index()
     {
-        //
+        $settings = WebsiteSetting::first();
+        return $this->successResponse($settings);
     }
 
     /**
@@ -36,7 +38,13 @@ class SettingController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $settings = WebsiteSetting::first();
+        if (!$settings) {
+            $settings = new WebsiteSetting();
+        }
+        $settings->fill($request->all());
+        $settings->save();
+        return $this->successResponse($settings, 'Settings updated successfully');
     }
 
     /**
@@ -45,5 +53,11 @@ class SettingController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function publicSettings()
+    {
+        $settings = WebsiteSetting::first();
+        return $this->successResponse($settings);
     }
 }

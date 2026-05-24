@@ -3,6 +3,7 @@ import api from '../services/api';
 
 interface SettingsState {
   siteName: string;
+  siteDescription: string;
   logo: string;
   favicon: string;
   isLoading: boolean;
@@ -11,6 +12,7 @@ interface SettingsState {
 
 export const useSettingsStore = create<SettingsState>((set) => ({
   siteName: 'Kayon Designs Ltd',
+  siteDescription: '',
   logo: '',
   favicon: '',
   isLoading: false,
@@ -18,11 +20,12 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     set({ isLoading: true });
     try {
       const response = await api.get('/settings/public');
-      if (response.data) {
+      if (response.data?.data) {
         set({
-          siteName: response.data.site_name || 'Kayon Designs Ltd',
-          logo: response.data.logo || '',
-          favicon: response.data.favicon || '',
+          siteName: response.data.data.site_name || 'Kayon Designs Ltd',
+          siteDescription: response.data.data.site_description || '',
+          logo: response.data.data.logo || '',
+          favicon: response.data.data.favicon || '',
         });
       }
     } catch (error) {
