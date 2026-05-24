@@ -3,22 +3,23 @@ import { useSettingsStore } from '../store/useSettingsStore';
 import api from '../services/api';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { MenuItem } from '../types';
 
 export default function Footer() {
-  const { siteName, siteDescription, logo, contact_email, phone, address } = useSettingsStore() as any;
-  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const { siteName, siteDescription, logo, contact_email, phone, address } = useSettingsStore();
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
   useEffect(() => {
     api.get('/menus/footer').then(res => {
       if (res.data.data) setMenuItems(res.data.data.items || []);
     }).catch(() => {
       setMenuItems([
-        { label: 'About Us', url: '/about' },
-        { label: 'Our Services', url: '/services' },
-        { label: 'Planning', url: '/planning' },
-        { label: 'Contact', url: '/contact' },
-        { label: 'Privacy Policy', url: '/privacy-policy' },
-        { label: 'Terms of Service', url: '/terms-of-service' },
+        { label: 'About Us', url: '/about', is_external: false },
+        { label: 'Our Services', url: '/services', is_external: false },
+        { label: 'Planning', url: '/planning', is_external: false },
+        { label: 'Contact', url: '/contact', is_external: false },
+        { label: 'Privacy Policy', url: '/privacy-policy', is_external: false },
+        { label: 'Terms of Service', url: '/terms-of-service', is_external: false },
       ]);
     });
   }, []);
@@ -49,7 +50,7 @@ export default function Footer() {
           <div>
             <h4 className="text-primary font-black text-sm uppercase tracking-[0.2em] mb-8">Quick Links</h4>
             <ul className="space-y-4">
-              {menuItems.map((item: any) => (
+              {menuItems.map((item) => (
                 <li key={item.label}>
                   <Link to={item.url} className="text-on-surface-variant hover:text-primary transition-colors text-sm font-bold uppercase tracking-widest flex items-center gap-2 group">
                     <div className="w-1.5 h-1.5 bg-secondary rounded-full opacity-0 group-hover:opacity-100 transition-all" />

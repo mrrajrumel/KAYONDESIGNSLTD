@@ -2,22 +2,26 @@ import { useEffect, useState } from 'react';
 import api from '../services/api';
 import { ArrowRight, ImageIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Showcase, Category } from '../types';
 
 export default function WorkShowcaseSection() {
-  const [showcases, setShowcases] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [showcases, setShowcases] = useState<Showcase[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
-      api.get('/showcases'),
-      api.get('/categories')
+      api.get<{ data: Showcase[] }>('/showcases'),
+      api.get<{ data: Category[] }>('/categories')
     ]).then(([showcaseRes, categoryRes]) => {
       setShowcases(showcaseRes.data.data || []);
       setCategories(categoryRes.data.data || []);
       setLoading(false);
-    }).catch(console.error);
+    }).catch(err => {
+      console.error(err);
+      setLoading(false);
+    });
   }, []);
 
   const filteredShowcases = activeCategory 
@@ -86,7 +90,7 @@ export default function WorkShowcaseSection() {
                 <span className="text-[10px] font-bold text-secondary mb-2 block uppercase tracking-[0.2em]">{item.category?.title || 'General'}</span>
                 <h3 className="text-xl font-bold text-primary mb-3 leading-tight">{item.title}</h3>
                 <p className="text-sm text-on-surface-variant line-clamp-2 leading-relaxed mb-6">{item.description}</p>
-                <Link to="/planning" className="inline-flex items-center gap-2 text-xs font-black text-primary uppercase tracking-widest hover:gap-3 transition-all">
+                <Link to={`/planning/${item.slug}`} className="inline-flex items-center gap-2 text-xs font-black text-primary uppercase tracking-widest hover:gap-3 transition-all">
                   Project Details <ArrowRight size={14} />
                 </Link>
               </div>

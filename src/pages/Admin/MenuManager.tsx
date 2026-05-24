@@ -1,15 +1,16 @@
 import { Edit, Trash2, Plus, X, List, Save } from 'lucide-react';
 import useApi from '../../hooks/useApi';
 import { useState, useEffect } from 'react';
+import { Menu, MenuItem } from '../../types';
 
 export default function MenuManager() {
-  const { data: menus, loading, updateItem, createItem, fetchData } = useApi<any>({ initialUrl: '/menus' });
+  const { data: menus, loading, updateItem, createItem } = useApi<Menu>({ initialUrl: '/menus' });
 
   const [activeTab, setActiveTab] = useState('header');
-  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<any>(null);
-  const [formData, setFormData] = useState({
+  const [editingItem, setEditingItem] = useState<{ item: MenuItem, index: number } | null>(null);
+  const [formData, setFormData] = useState<MenuItem>({
     label: '',
     url: '',
     is_external: false,
@@ -20,13 +21,13 @@ export default function MenuManager() {
   }, []);
 
   useEffect(() => {
-    const currentMenu = menus.find((m: any) => m.location === activeTab);
+    const currentMenu = menus.find((m) => m.location === activeTab);
     setMenuItems(currentMenu?.items || []);
   }, [activeTab, menus]);
 
-  const openModal = (item: any = null, index: number | null = null) => {
-    if (item) {
-      setEditingItem({ ...item, index });
+  const openModal = (item: MenuItem | null = null, index: number | null = null) => {
+    if (item !== null && index !== null) {
+      setEditingItem({ item, index });
       setFormData({
         label: item.label,
         url: item.url,
@@ -56,14 +57,14 @@ export default function MenuManager() {
   };
 
   const saveMenu = async () => {
-    const existingMenu = menus.find((m: any) => m.location === activeTab);
-    const data = {
-      name: activeTab.charAt(0).toUpperCase() + activeTab.slice(1) + ' Menu',
-      location: activeTab,
-      items: menuItems
-    };
-
     try {
+      const existingMenu = menus.find((m) => m.location === activeTab);
+      const data = {
+        name: activeTab.charAt(0).toUpperCase() + activeTab.slice(1) + ' Menu',
+        location: activeTab,
+        items: menuItems
+      };
+
       if (existingMenu) {
         await updateItem(`/menus/${existingMenu.id}`, data);
       } else {

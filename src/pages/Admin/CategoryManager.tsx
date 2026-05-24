@@ -1,13 +1,14 @@
 import { Edit, Trash2, Plus, X } from 'lucide-react';
-import useApi from '../../hooks/useApi';
-import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { useState, useEffect } from 'react';
+import useApi from '../../hooks/useApi';
+import { Category } from '../../types';
 
 export default function CategoryManager() {
-  const { data: categories, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/categories' });
+  const { data: categories, loading, deleteItem, createItem, updateItem } = useApi<Category>({ initialUrl: '/categories' });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -15,10 +16,6 @@ export default function CategoryManager() {
     status: true,
     order: 0,
   });
-
-  useEffect(() => {
-    // Initial fetch is handled by the useApi hook
-  }, []);
 
   const generateSlug = (title: string) => {
     return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -29,7 +26,7 @@ export default function CategoryManager() {
     setFormData({ ...formData, title, slug: generateSlug(title) });
   };
 
-  const openModal = (item: any = null) => {
+  const openModal = (item: Category | null = null) => {
     if (item) {
       setEditingCategory(item);
       setFormData({
@@ -51,14 +48,14 @@ export default function CategoryManager() {
     try {
       if (editingCategory) {
         await updateItem(`/categories/${editingCategory.id}`, formData);
+        toast.success('Category updated');
       } else {
         await createItem('/categories', formData);
+        toast.success('Category created');
       }
       setIsModalOpen(false);
-      toast.success(editingCategory ? 'Category updated!' : 'Category created!');
     } catch (err) {
       // Errors handled by hook
-      toast.error('Failed to save category.');
     }
   };
 

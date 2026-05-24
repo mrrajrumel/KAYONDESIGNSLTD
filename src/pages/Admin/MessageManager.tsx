@@ -1,8 +1,9 @@
 import { Mail, MailOpen, Trash2 } from 'lucide-react';
 import useApi from '../../hooks/useApi';
+import { ContactMessage } from '../../types';
 
 export default function MessageManager() {
-  const { data: messages, loading, deleteItem, updateItem } = useApi<any>({ initialUrl: '/contact-messages' });
+  const { data: messages, loading, deleteItem, updateItem } = useApi<ContactMessage>({ initialUrl: '/contact-messages' });
 
   const markAsRead = async (id: number) => {
     try {

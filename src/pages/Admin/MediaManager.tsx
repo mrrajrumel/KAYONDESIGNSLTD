@@ -3,9 +3,10 @@ import useApi from '../../hooks/useApi';
 import { useRef } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import { Media } from '../../types';
 
 export default function MediaManager() {
-  const { data: media, loading, deleteItem, fetchData } = useApi<any>({ initialUrl: '/media' });
+  const { data: media, loading, deleteItem, fetchData } = useApi<Media>({ initialUrl: '/media' });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

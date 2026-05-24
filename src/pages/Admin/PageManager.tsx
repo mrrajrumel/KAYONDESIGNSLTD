@@ -1,12 +1,13 @@
+import toast from 'react-hot-toast';
 import { Edit, Trash2, Plus, X } from 'lucide-react';
 import useApi from '../../hooks/useApi';
-import { useState, useEffect } from 'react';
+import { Page } from '../../types';
 
 export default function PageManager() {
-  const { data: pages, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/pages' });
+  const { data: pages, loading, deleteItem, createItem, updateItem } = useApi<Page>({ initialUrl: '/pages' });
   
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingPage, setEditPage] = useState<any>(null);
+  const [editingPage, setEditPage] = useState<Page | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -27,7 +28,7 @@ export default function PageManager() {
     setFormData({ ...formData, title, slug: generateSlug(title) });
   };
 
-  const openModal = (page: any = null) => {
+  const openModal = (page: Page | null = null) => {
     if (page) {
       setEditPage(page);
       setFormData({
@@ -52,7 +53,6 @@ export default function PageManager() {
         await createItem('/pages', formData);
       }
       setIsModalOpen(false);
-      fetchPages();
     } catch (err) {
       // Errors are handled by the hook
     }

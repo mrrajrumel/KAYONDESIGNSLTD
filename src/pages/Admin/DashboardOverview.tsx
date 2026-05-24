@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '../../services/api';
 import { Users, FileText, ImageIcon, MessageSquare } from 'lucide-react';
+import useApi from '../../hooks/useApi';
+import { AdminUser } from '../../types';
 
 interface Stats {
   pages: number;
@@ -28,7 +30,7 @@ export default function DashboardOverview() {
   );
 }
 
-function StatCard({ title, value, icon: Icon, color }: any) {
+function StatCard({ title, value, icon: Icon, color }: { title: string, value: number, icon: React.ElementType, color: string }) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center">
       <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white ${color}`}>

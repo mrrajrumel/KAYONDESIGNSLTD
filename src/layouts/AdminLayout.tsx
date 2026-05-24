@@ -1,22 +1,7 @@
+import React, { useEffect, useState, Suspense } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
-import {
-  LayoutDashboard, FileText, Settings, Image as ImageIcon, Users, LogOut,
-  Menu as MenuIcon, Briefcase, Mail, List, History, ChevronDown
-} from 'lucide-react';
-import api from '../services/api';
-import DashboardOverview from '../pages/Admin/DashboardOverview';
-import PageManager from '../pages/Admin/PageManager';
-import ShowcaseManager from '../pages/Admin/ShowcaseManager';
-import CategoryManager from '../pages/Admin/CategoryManager';
-import UserManager from '../pages/Admin/UserManager';
-import MenuManager from '../pages/Admin/MenuManager';
-import MediaManager from '../pages/Admin/MediaManager';
-import MessageManager from '../pages/Admin/MessageManager';
-import SettingsManager from '../pages/Admin/SettingsManager';
-import ActivityLogManager from '../pages/Admin/ActivityLogManager';
-import React, { useEffect, useState as React_useState, Suspense } from 'react'; // Alias useState
 
-const NavLink = ({ item, sidebarOpen }: { item: any, sidebarOpen: boolean }) => {
+const NavLink = ({ item, sidebarOpen }: { item: { path: string; icon: React.ElementType; name: string }, sidebarOpen: boolean }) => {
   const location = useLocation();
   const isActive = item.path === '/admin' ? location.pathname === item.path : location.pathname.startsWith(item.path);
 
@@ -35,25 +20,26 @@ const NavLink = ({ item, sidebarOpen }: { item: any, sidebarOpen: boolean }) => 
   )
 };
 
-const Accordion = ({ title, icon: Icon, children, sidebarOpen }: { title: string, icon: any, children: React.ReactNode, sidebarOpen: boolean }) => {
+const Accordion = ({ title, icon: Icon, children, sidebarOpen }: { title: string, icon: React.ElementType, children: React.ReactNode, sidebarOpen: boolean }) => {
   const location = useLocation();
-  const hasActiveChild = React.Children.toArray(children).some((child: any) =>
-    location.pathname.startsWith(child.props.item.path)
-  );
+  const hasActiveChild = React.Children.toArray(children).some((child) => {
+    const childProps = (child as React.ReactElement<any>).props.item;
+    return location.pathname.startsWith(childProps.path);
+  });
 
-  const [isOpen, setIsOpen] = React_useState(hasActiveChild); // Use aliased useState
+  const [isOpen, setIsOpen] = useState(hasActiveChild);
 
   useEffect(() => {
     if (sidebarOpen) {
       setIsOpen(hasActiveChild);
     }
-  }, [hasActiveChild, sidebarOpen]);
+  }, [hasActiveChild, sidebarOpen, setIsOpen]);
 
   if (!sidebarOpen) {
     return (
       <div className="py-2 space-y-2">
-        {React.Children.map(children, (child: any) => 
-          React.cloneElement(child, { sidebarOpen: false })
+        {React.Children.map(children, (child) => 
+          React.cloneElement(child as React.ReactElement<any>, { sidebarOpen: false })
         )}
       </div>
     );
@@ -83,7 +69,7 @@ const Accordion = ({ title, icon: Icon, children, sidebarOpen }: { title: string
 export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = React_useState(true); // Use aliased useState
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleLogout = async () => {
     try {

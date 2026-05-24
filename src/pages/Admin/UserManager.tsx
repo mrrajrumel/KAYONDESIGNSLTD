@@ -1,12 +1,13 @@
 import { Edit, Trash2, Plus, X, Shield, ShieldAlert } from 'lucide-react';
 import useApi from '../../hooks/useApi';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { AdminUser } from '../../types';
 
 export default function UserManager() {
-  const { data: users, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/admins' });
+  const { data: users, loading, deleteItem, createItem, updateItem } = useApi<AdminUser>({ initialUrl: '/admins' });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<any>(null);
+  const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     username: '',
@@ -16,15 +17,7 @@ export default function UserManager() {
     is_active: true,
   });
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
-    // Handled by useApi
-  };
-
-  const openModal = (item: any = null) => {
+  const openModal = (item: AdminUser | null = null) => {
     if (item) {
       setEditingUser(item);
       setFormData({
@@ -45,8 +38,10 @@ export default function UserManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const data = { ...formData };
-      if (!data.password) delete (data as any).password;
+      const data: Partial<typeof formData> = { ...formData };
+      if (!data.password) {
+        delete data.password;
+      }
 
       if (editingUser) {
         await updateItem(`/admins/${editingUser.id}`, data);

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import toast from 'react-hot-toast';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -18,11 +19,11 @@ export default function AdminLogin() {
       const response = await api.post('/auth/login', { email, password });
       localStorage.setItem('admin_token', response.data.token);
       navigate('/admin');
-    } catch (err: unknown) {
-      if (typeof err === 'object' && err !== null && 'response' in err && (err as any).response) {
-        const axiosError = err as { response?: { data?: { message?: string } } };
-        setError(axiosError.response?.data?.message || 'Invalid credentials');
-      } else if (err instanceof Error && err.message === 'Network Error') {
+    } catch (err) {
+      const axiosError = err as { response?: { data?: { message?: string } } };
+      if (axiosError.response?.data?.message) {
+        setError(axiosError.response.data.message);
+      } else if ((err as Error).message === 'Network Error') {
         setError('Cannot connect to server. Is the backend running?');
       } else {
         setError('Failed to connect to the server');

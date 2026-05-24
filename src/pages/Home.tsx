@@ -52,7 +52,7 @@ function useReveal() {
 }
 
 export default function Home() {
-  const [pageData, setPageData] = useState<any>(null);
+  const [pageData, setPageData] = useState<{ sections: { type: string; content: { items: any[] } }[] } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function Home() {
   }, []);
 
   const getSection = (type: string) => {
-    return pageData?.sections.find((s: any) => s.type === type);
+    return pageData?.sections.find((s) => s.type === type);
   }
 
   const heroRef = useReveal();
@@ -165,7 +165,7 @@ export default function Home() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 gap-6">
-            {(getSection('services_list')?.content.items || []).map((service: any, index: number) => {
+            {(getSection('services_list')?.content.items || []).map((service, index: number) => {
               const Icon = icons[service.icon];
               return (
                 <div key={index} className={`p-6 rounded-xl transition-all ${index === 0 ? 'bg-surface-container-high' : 'hover:bg-surface-container-high'}`}>
@@ -189,7 +189,7 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {(getSection('values_list')?.content.items || []).map((value: any, index: number) => {
+            {(getSection('values_list')?.content.items || []).map((value, index: number) => {
               const Icon = icons[value.icon];
               return (
                 <div key={index}>
@@ -221,7 +221,7 @@ export default function Home() {
       {/* Qualities */}
       <section className="bg-surface">
         <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-24 grid md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {(getSection('qualities_list')?.content.items || []).map((quality: any, index: number) => {
+          {(getSection('qualities_list')?.content.items || []).map((quality, index: number) => {
             const Icon = icons[quality.icon];
             return(
               <div key={index} className="flex gap-6">

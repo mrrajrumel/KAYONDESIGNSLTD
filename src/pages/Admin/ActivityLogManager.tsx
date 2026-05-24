@@ -1,8 +1,9 @@
 import { History, User } from 'lucide-react';
 import useApi from '../../hooks/useApi';
+import { ActivityLog } from '../../types';
 
 export default function ActivityLogManager() {
-  const { data: logs, loading } = useApi<any>({ initialUrl: '/activity-logs' });
+  const { data: logs, loading } = useApi<ActivityLog>({ initialUrl: '/activity-logs' });
 
   if (loading) return <div>Loading...</div>;
 
