@@ -1,8 +1,8 @@
-import { useEffect, useState, useRef } from 'react';
+import { Trash2, UploadCloud, Copy, ExternalLink } from 'lucide-react';
+import useApi from '../../hooks/useApi';
+import { useRef } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { Trash2, UploadCloud, Copy, ExternalLink, X } from 'lucide-react';
-import useApi from '../../hooks/useApi';
 
 export default function MediaManager() {
   const { data: media, loading, deleteItem, fetchData } = useApi<any>({ initialUrl: '/media' });

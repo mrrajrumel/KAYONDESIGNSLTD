@@ -1,5 +1,4 @@
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ClipboardList,
   Truck,
@@ -16,6 +15,7 @@ import {
 import WorkShowcaseSection from '../components/WorkShowcaseSection';
 import SEO from '../components/SEO';
 import api from '../services/api';
+import { Link } from 'react-router-dom';
 
 const icons: { [key: string]: React.ElementType } = {
   ClipboardList,
@@ -52,7 +52,6 @@ function useReveal() {
 }
 
 export default function Home() {
-  const navigate = useNavigate();
   const [pageData, setPageData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -115,20 +114,6 @@ export default function Home() {
                   <span className="font-bold text-primary text-lg">{word}</span>
                 </div>
               ))}
-            </div>
-            <div className="flex flex-wrap gap-3 pt-2">
-              <button
-                onClick={() => navigate('/contact')}
-                className="bg-primary text-on-primary px-8 py-3 font-semibold hover:opacity-90 transition-opacity flex items-center gap-2"
-              >
-                Get a Free Quote <ArrowRight size={16} />
-              </button>
-              <button
-                onClick={() => navigate('/services')}
-                className="border border-primary text-primary px-8 py-3 font-semibold hover:bg-primary/5 transition-colors"
-              >
-                Our Services
-              </button>
             </div>
           </div>
 
@@ -222,42 +207,14 @@ export default function Home() {
 
       {/* CTA */}
       <section ref={ctaRef} className="py-24 bg-primary/5 opacity-0 translate-y-6 transition-all duration-700">
-        <div className="absolute inset-0 opacity-10">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
-        </div>
-        <div
-          ref={ctaRef}
-          className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop relative z-10 flex flex-col md:flex-row justify-between items-center gap-lg opacity-0 translate-y-6 transition-all duration-700"
-        >
-          <div className="text-center md:text-left">
-            <h2 className="text-3xl md:text-4xl font-bold text-on-primary mb-2">
-              Ready to start your next project?
-            </h2>
-            <p className="text-on-primary-container max-w-lg">
-              Get in touch with our team of consultants for a tailored logistics proposal.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-md shrink-0">
-            <button
-              onClick={() => navigate('/contact')}
-              className="bg-secondary text-on-secondary px-lg py-3 font-bold hover:opacity-90 transition-opacity"
-            >
-              Request a Consultation
-            </button>
-            <button
-              onClick={() => navigate('/services')}
-              className="border border-on-primary text-on-primary px-lg py-3 font-bold hover:bg-on-primary/10 transition-colors"
-            >
-              View Our Services
-            </button>
-          </div>
+        <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop text-center">
+          <h2 className="text-3xl md:text-5xl font-bold text-primary mb-6">Ready to start your project?</h2>
+          <p className="text-lg text-on-surface-variant max-w-2xl mx-auto mb-10">
+            Let's discuss how our expert logistics planning can ensure your next construction project runs smoothly and efficiently.
+          </p>
+          <Link to="/contact" className="inline-flex items-center gap-3 bg-primary text-on-primary px-10 py-4 text-sm font-black tracking-[0.15em] uppercase hover:opacity-90 transition-all shadow-lg shadow-primary/20">
+            Get a Free Consultation <ArrowRight size={18} />
+          </Link>
         </div>
       </section>
 

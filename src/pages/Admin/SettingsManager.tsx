@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import api from '../../services/api';
-import toast from 'react-hot-toast';
 import { Save } from 'lucide-react';
 import useApi from '../../hooks/useApi';
+import { useState, useEffect } from 'react';
+import api from '../../services/api'; // api is still used for the custom update logic
+import toast from 'react-hot-toast'; // toast is still used for the custom update logic
 
 export default function SettingsManager() {
-  const { data, loading, updateItem } = useApi<any>({ initialUrl: '/settings' });
+  const { data, loading } = useApi<any>({ initialUrl: '/settings' });
   const [settings, setSettings] = useState({
     site_name: '',
     site_description: '',

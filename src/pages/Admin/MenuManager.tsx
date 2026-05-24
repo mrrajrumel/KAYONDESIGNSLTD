@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { Edit, Trash2, Plus, X, List, Save } from 'lucide-react';
 import useApi from '../../hooks/useApi';
+import { useState, useEffect } from 'react';
 
 export default function MenuManager() {
   const { data: menus, loading, updateItem, createItem, fetchData } = useApi<any>({ initialUrl: '/menus' });
@@ -18,10 +18,6 @@ export default function MenuManager() {
   useEffect(() => {
     fetchData();
   }, []);
-
-  const fetchMenus = async () => {
-    fetchData();
-  };
 
   useEffect(() => {
     const currentMenu = menus.find((m: any) => m.location === activeTab);

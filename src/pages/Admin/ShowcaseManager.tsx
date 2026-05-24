@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
 import { Edit, Trash2, Plus, Image as ImageIcon, X } from 'lucide-react';
 import useApi from '../../hooks/useApi';
+import { useState, useEffect } from 'react';
 
 export default function ShowcaseManager() {
   const { data: showcases, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/showcases' });
-  const { data: categories } = useApi<any>({ initialUrl: '/categories' });
+  const { data: categories, fetchData: fetchCategories } = useApi<any>({ initialUrl: '/categories' });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingShowcase, setEditingShowcase] = useState<any>(null);
@@ -18,9 +18,20 @@ export default function ShowcaseManager() {
     featured_image: '',
   });
 
-  useEffect(() => {
-    // Initial data loading
-  }, []);
+  // Initial data loading handled by useApi hook.
+
+  const generateSlug = (title: string) => {
+    return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const title = e.target.value;
+    setFormData({ ...formData, title, slug: generateSlug(title) });
+  };
 
   const openModal = (item: any = null) => {
     if (item) {

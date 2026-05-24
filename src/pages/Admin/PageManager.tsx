@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { Edit, Trash2, Plus, X } from 'lucide-react';
 import useApi from '../../hooks/useApi';
+import { useState, useEffect } from 'react';
 
 export default function PageManager() {
   const { data: pages, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/pages' });
@@ -13,6 +13,19 @@ export default function PageManager() {
     status: 'draft',
     is_home: false,
   });
+
+  const fetchPages = async () => {
+    // Handled by useApi
+  };
+
+  const generateSlug = (title: string) => {
+    return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const title = e.target.value;
+    setFormData({ ...formData, title, slug: generateSlug(title) });
+  };
 
   const openModal = (page: any = null) => {
     if (page) {
@@ -39,6 +52,7 @@ export default function PageManager() {
         await createItem('/pages', formData);
       }
       setIsModalOpen(false);
+      fetchPages();
     } catch (err) {
       // Errors are handled by the hook
     }
@@ -48,6 +62,10 @@ export default function PageManager() {
     if (!confirm('Are you sure you want to delete this page?')) return;
     await deleteItem(`/pages/${id}`);
   };
+
+  useEffect(() => {
+    fetchPages();
+  }, []);
 
   if (loading) return <div>Loading...</div>;
 

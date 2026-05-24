@@ -1,6 +1,8 @@
-import { Facebook, Instagram, Linkedin, Twitter, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import { useSettingsStore } from '../store/useSettingsStore';
 import api from '../services/api';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   const { siteName, siteDescription, logo, contact_email, phone, address } = useSettingsStore() as any;
@@ -47,7 +49,7 @@ export default function Footer() {
           <div>
             <h4 className="text-primary font-black text-sm uppercase tracking-[0.2em] mb-8">Quick Links</h4>
             <ul className="space-y-4">
-              {menuItems.map((item) => (
+              {menuItems.map((item: any) => (
                 <li key={item.label}>
                   <Link to={item.url} className="text-on-surface-variant hover:text-primary transition-colors text-sm font-bold uppercase tracking-widest flex items-center gap-2 group">
                     <div className="w-1.5 h-1.5 bg-secondary rounded-full opacity-0 group-hover:opacity-100 transition-all" />
@@ -93,13 +95,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-outline-variant pt-md flex flex-col md:flex-row justify-between items-center gap-3">
-          <p className="text-on-surface-variant text-xs">
-            &copy; {new Date().getFullYear()} Kayon Designs Ltd. Construction Logistics &amp; Planning Consultancy. All rights reserved.
-          </p>
-          <div className="flex gap-6">
-            <Link to="/privacy-policy" onClick={scrollToTop} className="text-on-surface-variant text-xs hover:text-primary transition-colors">Privacy Policy</Link>
-            <Link to="/terms-of-service" onClick={scrollToTop} className="text-on-surface-variant text-xs hover:text-primary transition-colors">Terms of Service</Link>
+        <div className="border-t border-outline-variant pt-md flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-on-surface-variant text-xs font-medium uppercase tracking-widest">&copy; {new Date().getFullYear()} {siteName}. All Rights Reserved.</p>
+          <div className="flex items-center gap-6">
+            <Link to="/privacy-policy" onClick={() => window.scrollTo(0, 0)} className="text-on-surface-variant text-xs hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link to="/terms-of-service" onClick={() => window.scrollTo(0, 0)} className="text-on-surface-variant text-xs hover:text-primary transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

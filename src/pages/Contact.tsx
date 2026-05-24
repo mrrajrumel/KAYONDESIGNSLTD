@@ -4,9 +4,6 @@ import { useState } from 'react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 
-const contactDetails = [
-  { icon: MapPin, text: 'London, United Kingdom' },
-];
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -127,7 +124,6 @@ export default function Contact() {
                   'Tailored proposal for your project',
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-2 text-sm text-on-surface-variant">
-                    <CheckCircle2 size={14} className="text-secondary flex-shrink-0" />
                     {item}
                   </li>
                 ))}
@@ -148,7 +144,6 @@ export default function Contact() {
             {loading ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-xl border border-outline-variant bg-surface-container-low min-h-[400px]">
                 <div className="w-16 h-16 flex items-center justify-center bg-secondary-container text-secondary mb-4">
-                  <CheckCircle2 size={32} />
                 </div>
                 <h3 className="text-2xl font-bold text-primary mb-2">Message Received!</h3>
                 <p className="text-on-surface-variant max-w-md">

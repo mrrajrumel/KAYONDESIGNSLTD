@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Edit, Trash2, Plus, X, List } from 'lucide-react';
+import { Edit, Trash2, Plus, X } from 'lucide-react';
 import useApi from '../../hooks/useApi';
+import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 export default function CategoryManager() {
   const { data: categories, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/categories' });
@@ -54,14 +55,17 @@ export default function CategoryManager() {
         await createItem('/categories', formData);
       }
       setIsModalOpen(false);
+      toast.success(editingCategory ? 'Category updated!' : 'Category created!');
     } catch (err) {
       // Errors handled by hook
+      toast.error('Failed to save category.');
     }
   };
 
   const deleteCategory = async (id: number) => {
     if (!confirm('Are you sure? This may affect projects in this category.')) return;
     await deleteItem(`/categories/${id}`);
+    toast.success('Category deleted!');
   };
 
   if (loading) return <div>Loading...</div>;

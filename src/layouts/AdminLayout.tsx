@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, FileText, Settings, Image as ImageIcon, Users, LogOut,
@@ -10,11 +9,12 @@ import PageManager from '../pages/Admin/PageManager';
 import ShowcaseManager from '../pages/Admin/ShowcaseManager';
 import CategoryManager from '../pages/Admin/CategoryManager';
 import UserManager from '../pages/Admin/UserManager';
+import MenuManager from '../pages/Admin/MenuManager';
 import MediaManager from '../pages/Admin/MediaManager';
 import MessageManager from '../pages/Admin/MessageManager';
 import SettingsManager from '../pages/Admin/SettingsManager';
 import ActivityLogManager from '../pages/Admin/ActivityLogManager';
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState as React_useState, Suspense } from 'react'; // Alias useState
 
 const NavLink = ({ item, sidebarOpen }: { item: any, sidebarOpen: boolean }) => {
   const location = useLocation();
@@ -41,7 +41,7 @@ const Accordion = ({ title, icon: Icon, children, sidebarOpen }: { title: string
     location.pathname.startsWith(child.props.item.path)
   );
 
-  const [isOpen, setIsOpen] = useState(hasActiveChild);
+  const [isOpen, setIsOpen] = React_useState(hasActiveChild); // Use aliased useState
 
   useEffect(() => {
     if (sidebarOpen) {
@@ -83,7 +83,7 @@ const Accordion = ({ title, icon: Icon, children, sidebarOpen }: { title: string
 export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = React_useState(true); // Use aliased useState
 
   const handleLogout = async () => {
     try {

@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react';
-import api from '../../services/api';
-import toast from 'react-hot-toast';
-import { Trash2, Mail, MailOpen } from 'lucide-react';
+import { Mail, MailOpen, Trash2 } from 'lucide-react';
 import useApi from '../../hooks/useApi';
 
 export default function MessageManager() {

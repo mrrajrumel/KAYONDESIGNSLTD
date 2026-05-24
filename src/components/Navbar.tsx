@@ -1,16 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Menu, X, ChevronRight, Phone, Mail } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import { useSettingsStore } from '../store/useSettingsStore';
 import api from '../services/api';
-
-const navLinks = [
-  { id: '/', label: 'Home' },
-  { id: '/services', label: 'Services' },
-  { id: '/planning', label: 'Planning' },
-  { id: '/about', label: 'About' },
-  { id: '/contact', label: 'Contact' },
-];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);

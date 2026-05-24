@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
-import api from '../../services/api';
-import toast from 'react-hot-toast';
 import { Edit, Trash2, Plus, X, Shield, ShieldAlert } from 'lucide-react';
 import useApi from '../../hooks/useApi';
+import { useState, useEffect } from 'react';
 
 export default function UserManager() {
   const { data: users, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/admins' });
@@ -23,15 +21,7 @@ export default function UserManager() {
   }, []);
 
   const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get('/admins');
-      setUsers(res.data.data.data || []);
-    } catch (err) {
-      toast.error('Failed to load users');
-    } finally {
-      setLoading(false);
-    }
+    // Handled by useApi
   };
 
   const openModal = (item: any = null) => {
