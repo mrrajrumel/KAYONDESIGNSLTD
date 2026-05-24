@@ -14,6 +14,7 @@ import MediaManager from '../pages/Admin/MediaManager';
 import MessageManager from '../pages/Admin/MessageManager';
 import SettingsManager from '../pages/Admin/SettingsManager';
 import ActivityLogManager from '../pages/Admin/ActivityLogManager';
+import React, { useEffect, useState, Suspense } from 'react';
 
 const NavLink = ({ item, sidebarOpen }: { item: any, sidebarOpen: boolean }) => {
   const location = useLocation();
@@ -43,11 +44,19 @@ const Accordion = ({ title, icon: Icon, children, sidebarOpen }: { title: string
   const [isOpen, setIsOpen] = useState(hasActiveChild);
 
   useEffect(() => {
-    setIsOpen(hasActiveChild);
-  }, [hasActiveChild]);
+    if (sidebarOpen) {
+      setIsOpen(hasActiveChild);
+    }
+  }, [hasActiveChild, sidebarOpen]);
 
   if (!sidebarOpen) {
-    return <div className="py-2">{children}</div>;
+    return (
+      <div className="py-2 space-y-2">
+        {React.Children.map(children, (child: any) => 
+          React.cloneElement(child, { sidebarOpen: false })
+        )}
+      </div>
+    );
   }
 
   return (
@@ -94,19 +103,19 @@ export default function AdminLayout() {
     content: [
       { name: 'Pages', path: '/admin/pages', icon: FileText },
       { name: 'Menus', path: '/admin/menus', icon: MenuIcon },
-      { name: 'Media', path: '/admin/media', icon: ImageIcon },
     ],
     showcase: [
       { name: 'Projects', path: '/admin/showcases', icon: Briefcase },
       { name: 'Categories', path: '/admin/categories', icon: List },
     ],
+    site: [
+      { name: 'Media', path: '/admin/media', icon: ImageIcon },
+      { name: 'Messages', path: '/admin/messages', icon: Mail },
+      { name: 'Settings', path: '/admin/settings', icon: Settings },
+    ],
     admin: [
       { name: 'Users', path: '/admin/users', icon: Users },
       { name: 'Activity Logs', path: '/admin/logs', icon: History },
-      { name: 'Settings', path: '/admin/settings', icon: Settings },
-    ],
-    other: [
-      { name: 'Messages', path: '/admin/messages', icon: Mail },
     ]
   };
 
@@ -132,7 +141,9 @@ export default function AdminLayout() {
             {navItems.content.map((item) => <NavLink key={item.path} item={item} sidebarOpen={sidebarOpen} />)}
           </Accordion>
           
-          {navItems.other.map((item) => <NavLink key={item.path} item={item} sidebarOpen={sidebarOpen} />)}
+          <Accordion title="Site Management" icon={Settings} sidebarOpen={sidebarOpen}>
+            {navItems.site.map((item) => <NavLink key={item.path} item={item} sidebarOpen={sidebarOpen} />)}
+          </Accordion>
 
           <Accordion title="Administration" icon={Users} sidebarOpen={sidebarOpen}>
             {navItems.admin.map((item) => <NavLink key={item.path} item={item} sidebarOpen={sidebarOpen} />)}
@@ -158,18 +169,20 @@ export default function AdminLayout() {
           </h2>
         </header>
         <div className="flex-1 p-6 overflow-auto">
-          <Routes>
-            <Route path="/" element={<DashboardOverview />} />
-            <Route path="/pages" element={<PageManager />} />
-            <Route path="/menus" element={<MenuManager />} />
-            <Route path="/categories" element={<CategoryManager />} />
-            <Route path="/showcases" element={<ShowcaseManager />} />
-            <Route path="/media" element={<MediaManager />} />
-            <Route path="/messages" element={<MessageManager />} />
-            <Route path="/settings" element={<SettingsManager />} />
-            <Route path="/users" element={<UserManager />} />
-            <Route path="/logs" element={<ActivityLogManager />} />
-          </Routes>
+          <Suspense fallback={<div className="text-center p-12">Loading page...</div>}>
+            <Routes>
+              <Route path="/" element={<DashboardOverview />} />
+              <Route path="/pages" element={<PageManager />} />
+              <Route path="/menus" element={<MenuManager />} />
+              <Route path="/categories" element={<CategoryManager />} />
+              <Route path="/showcases" element={<ShowcaseManager />} />
+              <Route path="/media" element={<MediaManager />} />
+              <Route path="/messages" element={<MessageManager />} />
+              <Route path="/settings" element={<SettingsManager />} />
+              <Route path="/users" element={<UserManager />} />
+              <Route path="/logs" element={<ActivityLogManager />} />
+            </Routes>
+          </Suspense>
         </div>
       </main>
     </div>

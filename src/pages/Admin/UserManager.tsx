@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { Edit, Trash2, Plus, X, Shield, ShieldAlert } from 'lucide-react';
+import useApi from '../../hooks/useApi';
 
 export default function UserManager() {
-  const [users, setUsers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: users, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/admins' });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -54,31 +55,23 @@ export default function UserManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const data = { ...formData };
+      if (!data.password) delete (data as any).password;
+
       if (editingUser) {
-        const data = { ...formData };
-        if (!data.password) delete (data as any).password;
-        await api.put(`/admins/${editingUser.id}`, data);
-        toast.success('Admin updated');
+        await updateItem(`/admins/${editingUser.id}`, data);
       } else {
-        await api.post('/admins', formData);
-        toast.success('Admin created');
+        await createItem('/admins', data);
       }
       setIsModalOpen(false);
-      fetchUsers();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Something went wrong');
+    } catch (err) {
+      // Errors handled by hook
     }
   };
 
   const deleteUser = async (id: number) => {
     if (!confirm('Are you sure you want to remove this administrator?')) return;
-    try {
-      await api.delete(`/admins/${id}`);
-      toast.success('Admin removed');
-      fetchUsers();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to delete');
-    }
+    await deleteItem(`/admins/${id}`);
   };
 
   if (loading) return <div>Loading...</div>;

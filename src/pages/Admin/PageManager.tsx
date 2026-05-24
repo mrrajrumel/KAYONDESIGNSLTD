@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
-import api from '../../services/api';
-import toast from 'react-hot-toast';
+import { useState } from 'react';
 import { Edit, Trash2, Plus, X } from 'lucide-react';
+import useApi from '../../hooks/useApi';
 
 export default function PageManager() {
-  const [pages, setPages] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: pages, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/pages' });
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPage, setEditPage] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -14,31 +13,6 @@ export default function PageManager() {
     status: 'draft',
     is_home: false,
   });
-
-  useEffect(() => {
-    fetchPages();
-  }, []);
-
-  const fetchPages = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get('/pages');
-      setPages(res.data.data.data || []);
-    } catch (err) {
-      toast.error('Failed to load pages');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const generateSlug = (title: string) => {
-    return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-  };
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const title = e.target.value;
-    setFormData({ ...formData, title, slug: generateSlug(title) });
-  };
 
   const openModal = (page: any = null) => {
     if (page) {
@@ -60,28 +34,19 @@ export default function PageManager() {
     e.preventDefault();
     try {
       if (editingPage) {
-        await api.put(`/pages/${editingPage.id}`, formData);
-        toast.success('Page updated successfully');
+        await updateItem(`/pages/${editingPage.id}`, formData);
       } else {
-        await api.post('/pages', formData);
-        toast.success('Page created successfully');
+        await createItem('/pages', formData);
       }
       setIsModalOpen(false);
-      fetchPages();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Something went wrong');
+    } catch (err) {
+      // Errors are handled by the hook
     }
   };
 
   const deletePage = async (id: number) => {
     if (!confirm('Are you sure you want to delete this page?')) return;
-    try {
-      await api.delete(`/pages/${id}`);
-      toast.success('Page deleted successfully');
-      fetchPages();
-    } catch (err) {
-      toast.error('Failed to delete page');
-    }
+    await deleteItem(`/pages/${id}`);
   };
 
   if (loading) return <div>Loading...</div>;

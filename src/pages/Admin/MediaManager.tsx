@@ -1,27 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { Trash2, UploadCloud, Copy, ExternalLink } from 'lucide-react';
+import { Trash2, UploadCloud, Copy, ExternalLink, X } from 'lucide-react';
+import useApi from '../../hooks/useApi';
 
 export default function MediaManager() {
-  const [media, setMedia] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: media, loading, deleteItem, fetchData } = useApi<any>({ initialUrl: '/media' });
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    fetchMedia();
-  }, []);
-
-  const fetchMedia = async () => {
-    try {
-      const res = await api.get('/media');
-      setMedia(res.data.data.data || []);
-    } catch (err) {
-      toast.error('Failed to load media');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
@@ -31,28 +16,21 @@ export default function MediaManager() {
       formData.append('files[]', e.target.files[i]);
     }
 
-    toast.loading('Uploading...', { id: 'upload' });
+    const toastId = toast.loading('Uploading...');
     try {
-      // Assuming backend /media handles array of files
       await api.post('/media', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      toast.success('Upload complete', { id: 'upload' });
-      fetchMedia();
+      toast.success('Upload complete', { id: toastId });
+      fetchData();
     } catch (err) {
-      toast.error('Upload failed', { id: 'upload' });
+      toast.error('Upload failed', { id: toastId });
     }
   };
 
   const deleteMedia = async (id: number) => {
     if (!confirm('Are you sure you want to delete this file?')) return;
-    try {
-      await api.delete(`/media/${id}`);
-      toast.success('Deleted successfully');
-      fetchMedia();
-    } catch (err) {
-      toast.error('Failed to delete');
-    }
+    await deleteItem(`/media/${id}`);
   };
 
   const copyToClipboard = (url: string) => {

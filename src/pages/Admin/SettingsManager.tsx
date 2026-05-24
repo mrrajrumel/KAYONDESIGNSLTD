@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { Save } from 'lucide-react';
+import useApi from '../../hooks/useApi';
 
 export default function SettingsManager() {
+  const { data, loading, updateItem } = useApi<any>({ initialUrl: '/settings' });
   const [settings, setSettings] = useState({
     site_name: '',
     site_description: '',
@@ -13,33 +15,22 @@ export default function SettingsManager() {
     logo: '',
     favicon: '',
   });
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  const fetchSettings = async () => {
-    try {
-      const res = await api.get('/settings');
-      if (res.data.data) {
-        setSettings({
-          site_name: res.data.data.site_name || '',
-          site_description: res.data.data.site_description || '',
-          contact_email: res.data.data.contact_email || '',
-          phone: res.data.data.phone || '',
-          address: res.data.data.address || '',
-          logo: res.data.data.logo || '',
-          favicon: res.data.data.favicon || '',
-        });
-      }
-    } catch (err) {
-      toast.error('Failed to load settings');
-    } finally {
-      setLoading(false);
+    if (data.length) {
+      const initialSettings = data[0];
+      setSettings({
+        site_name: initialSettings.site_name || '',
+        site_description: initialSettings.site_description || '',
+        contact_email: initialSettings.contact_email || '',
+        phone: initialSettings.phone || '',
+        address: initialSettings.address || '',
+        logo: initialSettings.logo || '',
+        favicon: initialSettings.favicon || '',
+      });
     }
-  };
+  }, [data]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

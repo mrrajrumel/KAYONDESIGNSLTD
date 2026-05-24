@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
-import api from '../../services/api';
-import toast from 'react-hot-toast';
+import { useState } from 'react';
 import { Edit, Trash2, Plus, X, List, Save } from 'lucide-react';
+import useApi from '../../hooks/useApi';
 
 export default function MenuManager() {
-  const [menus, setMenus] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: menus, loading, updateItem, createItem, fetchData } = useApi<any>({ initialUrl: '/menus' });
+
   const [activeTab, setActiveTab] = useState('header');
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,23 +16,11 @@ export default function MenuManager() {
   });
 
   useEffect(() => {
-    fetchMenus();
+    fetchData();
   }, []);
 
   const fetchMenus = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get('/menus');
-      const allMenus = res.data.data.data || [];
-      setMenus(allMenus);
-      
-      const currentMenu = allMenus.find((m: any) => m.location === activeTab);
-      setMenuItems(currentMenu?.items || []);
-    } catch (err) {
-      toast.error('Failed to load menus');
-    } finally {
-      setLoading(false);
-    }
+    fetchData();
   };
 
   useEffect(() => {
@@ -73,23 +60,21 @@ export default function MenuManager() {
   };
 
   const saveMenu = async () => {
-    try {
-      const existingMenu = menus.find((m: any) => m.location === activeTab);
-      const data = {
-        name: activeTab.charAt(0).toUpperCase() + activeTab.slice(1) + ' Menu',
-        location: activeTab,
-        items: menuItems
-      };
+    const existingMenu = menus.find((m: any) => m.location === activeTab);
+    const data = {
+      name: activeTab.charAt(0).toUpperCase() + activeTab.slice(1) + ' Menu',
+      location: activeTab,
+      items: menuItems
+    };
 
+    try {
       if (existingMenu) {
-        await api.put(`/menus/${existingMenu.id}`, data);
+        await updateItem(`/menus/${existingMenu.id}`, data);
       } else {
-        await api.post('/menus', data);
+        await createItem('/menus', data);
       }
-      toast.success('Menu saved successfully');
-      fetchMenus();
     } catch (err) {
-      toast.error('Failed to save menu');
+      // Errors handled by hook
     }
   };
 

@@ -1,27 +1,8 @@
-import { useEffect, useState } from 'react';
-import api from '../../services/api';
-import toast from 'react-hot-toast';
 import { History, User } from 'lucide-react';
+import useApi from '../../hooks/useApi';
 
 export default function ActivityLogManager() {
-  const [logs, setLogs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchLogs();
-  }, []);
-
-  const fetchLogs = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get('/activity-logs');
-      setLogs(res.data.data.data || []);
-    } catch (err) {
-      toast.error('Failed to load logs');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: logs, loading } = useApi<any>({ initialUrl: '/activity-logs' });
 
   if (loading) return <div>Loading...</div>;
 

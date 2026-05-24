@@ -2,44 +2,23 @@ import { useEffect, useState } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { Trash2, Mail, MailOpen } from 'lucide-react';
+import useApi from '../../hooks/useApi';
 
 export default function MessageManager() {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchMessages();
-  }, []);
-
-  const fetchMessages = async () => {
-    try {
-      const res = await api.get('/contact-messages');
-      setMessages(res.data.data.data || []);
-    } catch (err) {
-      toast.error('Failed to load messages');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: messages, loading, deleteItem, updateItem } = useApi<any>({ initialUrl: '/contact-messages' });
 
   const markAsRead = async (id: number) => {
     try {
-      await api.put(`/contact-messages/${id}/read`);
-      setMessages(messages.map(m => m.id === id ? { ...m, is_read: true } : m));
+      // We do an optimistic update here for faster UI feedback
+      await updateItem(`/contact-messages/${id}/read`, { is_read: true });
     } catch (err) {
-      toast.error('Failed to update status');
+      // error handled by hook
     }
   };
 
   const deleteMessage = async (id: number) => {
     if (!confirm('Are you sure you want to delete this message?')) return;
-    try {
-      await api.delete(`/contact-messages/${id}`);
-      toast.success('Message deleted');
-      fetchMessages();
-    } catch (err) {
-      toast.error('Failed to delete message');
-    }
+    await deleteItem(`/contact-messages/${id}`);
   };
 
   if (loading) return <div>Loading...</div>;

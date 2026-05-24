@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import api from '../../services/api';
-import toast from 'react-hot-toast';
 import { Edit, Trash2, Plus, X, List } from 'lucide-react';
+import useApi from '../../hooks/useApi';
 
 export default function CategoryManager() {
-  const [categories, setCategories] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: categories, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/categories' });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -17,20 +16,8 @@ export default function CategoryManager() {
   });
 
   useEffect(() => {
-    fetchCategories();
+    // Initial fetch is handled by the useApi hook
   }, []);
-
-  const fetchCategories = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get('/categories');
-      setCategories(res.data.data || []);
-    } catch (err) {
-      toast.error('Failed to load categories');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const generateSlug = (title: string) => {
     return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -62,28 +49,19 @@ export default function CategoryManager() {
     e.preventDefault();
     try {
       if (editingCategory) {
-        await api.put(`/categories/${editingCategory.id}`, formData);
-        toast.success('Category updated');
+        await updateItem(`/categories/${editingCategory.id}`, formData);
       } else {
-        await api.post('/categories', formData);
-        toast.success('Category created');
+        await createItem('/categories', formData);
       }
       setIsModalOpen(false);
-      fetchCategories();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Something went wrong');
+    } catch (err) {
+      // Errors handled by hook
     }
   };
 
   const deleteCategory = async (id: number) => {
     if (!confirm('Are you sure? This may affect projects in this category.')) return;
-    try {
-      await api.delete(`/categories/${id}`);
-      toast.success('Category deleted');
-      fetchCategories();
-    } catch (err) {
-      toast.error('Failed to delete');
-    }
+    await deleteItem(`/categories/${id}`);
   };
 
   if (loading) return <div>Loading...</div>;

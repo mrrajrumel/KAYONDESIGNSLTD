@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import api from '../../services/api';
-import toast from 'react-hot-toast';
 import { Edit, Trash2, Plus, Image as ImageIcon, X } from 'lucide-react';
+import useApi from '../../hooks/useApi';
 
 export default function ShowcaseManager() {
-  const [showcases, setShowcases] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: showcases, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/showcases' });
+  const { data: categories } = useApi<any>({ initialUrl: '/categories' });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingShowcase, setEditingShowcase] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -20,39 +19,8 @@ export default function ShowcaseManager() {
   });
 
   useEffect(() => {
-    fetchShowcases();
-    fetchCategories();
+    // Initial data loading
   }, []);
-
-  const fetchShowcases = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get('/showcases');
-      setShowcases(res.data.data.data || []);
-    } catch (err) {
-      toast.error('Failed to load showcases');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const res = await api.get('/categories');
-      setCategories(res.data.data || []);
-    } catch (err) {
-      console.error('Failed to load categories');
-    }
-  };
-
-  const generateSlug = (title: string) => {
-    return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-  };
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const title = e.target.value;
-    setFormData({ ...formData, title, slug: generateSlug(title) });
-  };
 
   const openModal = (item: any = null) => {
     if (item) {
@@ -84,29 +52,21 @@ export default function ShowcaseManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = { ...formData, category_id: formData.category_id || null };
       if (editingShowcase) {
-        await api.put(`/showcases/${editingShowcase.id}`, formData);
-        toast.success('Project updated successfully');
+        await updateItem(`/showcases/${editingShowcase.id}`, payload);
       } else {
-        await api.post('/showcases', formData);
-        toast.success('Project added successfully');
+        await createItem('/showcases', payload);
       }
       setIsModalOpen(false);
-      fetchShowcases();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Something went wrong');
+    } catch (err) {
+      // Errors handled by hook
     }
   };
 
   const deleteShowcase = async (id: number) => {
     if (!confirm('Are you sure you want to delete this project?')) return;
-    try {
-      await api.delete(`/showcases/${id}`);
-      toast.success('Project deleted successfully');
-      fetchShowcases();
-    } catch (err) {
-      toast.error('Failed to delete project');
-    }
+    await deleteItem(`/showcases/${id}`);
   };
 
   if (loading) return <div>Loading...</div>;
