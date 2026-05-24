@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\ActivityLogController;
 Route::post('/auth/login', [AdminController::class, 'login']);
 
 // Public Routes
+Route::get('/homepage', [PageController::class, 'showHome']);
 Route::get('/pages', [PageController::class, 'indexPublic']);
 Route::get('/pages/{slug}', [PageController::class, 'showPublic']);
 Route::get('/settings/public', [SettingController::class, 'publicSettings']);

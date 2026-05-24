@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ClipboardList,
   Truck,
@@ -15,6 +15,20 @@ import {
 } from 'lucide-react';
 import WorkShowcaseSection from '../components/WorkShowcaseSection';
 import SEO from '../components/SEO';
+import api from '../services/api';
+
+const icons: { [key: string]: React.ElementType } = {
+  ClipboardList,
+  Truck,
+  Map,
+  TrafficCone,
+  Handshake,
+  CheckCircle2,
+  TrendingUp,
+  Zap,
+  Target,
+  Users,
+};
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -37,61 +51,35 @@ function useReveal() {
   return ref;
 }
 
-const services = [
-  {
-    icon: ClipboardList,
-    title: 'CLPs',
-    desc: 'Comprehensive Construction Logistics Plans tailored to secure planning approvals and ensure site feasibility for any development.',
-    num: '01',
-    featured: true,
-  },
-  {
-    icon: Truck,
-    title: 'Swept Paths',
-    desc: 'Vehicle tracking analysis for precise site access and clearance verification across all vehicle types.',
-    num: '02',
-  },
-  {
-    icon: Map,
-    title: 'Access Plans',
-    desc: 'Strategic entry and exit route design for optimal site efficiency and pedestrian safety.',
-    num: '03',
-  },
-  {
-    icon: TrafficCone,
-    title: 'Traffic Management',
-    desc: 'Advanced planning for urban streetworks and complex logistics coordination in busy city environments.',
-    num: '04',
-  },
-  {
-    icon: Handshake,
-    title: 'Tender Support',
-    desc: 'Professional logistics visualisation and strategic planning that gives your bids the winning edge.',
-    num: '05',
-    dark: true,
-  },
-];
-
-const values = [
-  { icon: CheckCircle2, title: 'Reduce Risk', desc: 'Identifying bottlenecks before they impact your programme.' },
-  { icon: TrendingUp, title: 'Improve Approvals', desc: 'Expert knowledge of local authority requirements.' },
-  { icon: Zap, title: 'Save Time', desc: 'Streamlined processes developed through years of experience.' },
-  { icon: Target, title: 'Protect Programme', desc: 'Resilient logistics that adapt to site-specific challenges.' },
-];
-
-const qualities = [
-  { icon: Users, title: 'Collaborative', desc: 'We work as an extension of your project team.' },
-  { icon: Zap, title: 'Responsive', desc: 'Agile turnarounds to meet tight submission windows.' },
-  { icon: TrendingUp, title: 'Commercially Aware', desc: 'Balancing compliance with cost-effective strategies.' },
-  { icon: Target, title: 'Delivery Driven', desc: 'Real-world solutions that keep your programme on track.' },
-];
-
 export default function Home() {
   const navigate = useNavigate();
+  const [pageData, setPageData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    api.get('/homepage')
+      .then(res => setPageData(res.data.data))
+      .catch(err => console.error("Failed to fetch homepage data:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const getSection = (type: string) => {
+    return pageData?.sections.find((s: any) => s.type === type);
+  }
+
   const heroRef = useReveal();
   const servicesRef = useReveal();
   const valuesRef = useReveal();
   const ctaRef = useReveal();
+
+  if (loading) {
+    return (
+      <div className="pt-20 min-h-screen flex items-center justify-center">
+        <div className="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <main className="pt-20">
@@ -184,151 +172,56 @@ export default function Home() {
 
       {/* Services Overview */}
       <section ref={servicesRef} className="py-24 bg-white opacity-0 translate-y-6 transition-all duration-700">
-        <div
-          ref={servicesRef}
-          className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop opacity-0 translate-y-6 transition-all duration-700"
-        >
-          <div className="mb-lg border-l-4 border-secondary pl-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-2">
-              Practical Solutions. Real-World Results.
-            </h2>
-            <p className="text-on-surface-variant max-w-xl text-base">
-              Supporting developers, contractors, and consultants with industry-leading logistics expertise across London and the UK.
+        <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop grid md:grid-cols-2 gap-lg items-center">
+          <div className="max-w-md">
+            <h2 className="text-3xl md:text-5xl font-bold text-primary mb-6">Logistics Planning Services</h2>
+            <p className="text-lg text-on-surface-variant leading-relaxed">
+              From feasibility and planning to traffic management and tender support, our services cover every stage of your construction project.
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-gutter">
-            {services.map((s) => {
-              const Icon = s.icon;
-              if (s.featured) {
-                return (
-                  <div
-                    key={s.title}
-                    className="md:col-span-2 border border-outline-variant p-md hover:bg-surface-container-low transition-colors group cursor-pointer relative overflow-hidden"
-                    onClick={() => navigate('/services')}
-                  >
-                    <div className="flex justify-between items-start mb-lg">
-                      <div className="p-3 bg-primary text-on-primary">
-                        <Icon size={24} />
-                      </div>
-                      <span className="text-7xl font-bold text-outline-variant/20">{s.num}</span>
-                    </div>
-                    <h3 className="text-2xl font-semibold text-primary mb-2">{s.title}</h3>
-                    <p className="text-on-surface-variant mb-md">{s.desc}</p>
-                    <div className="flex items-center text-primary font-bold gap-1 group-hover:gap-2 transition-all">
-                      <span>Explore Service</span>
-                      <ArrowRight size={16} />
-                    </div>
-                  </div>
-                );
-              }
-              if (s.dark) {
-                return (
-                  <div
-                    key={s.title}
-                    className="md:col-span-2 border border-primary bg-primary text-on-primary p-md cursor-pointer group"
-                    onClick={() => navigate('/contact')}
-                  >
-                    <div className="flex justify-between items-start mb-lg">
-                      <div className="p-3 bg-white text-primary">
-                        <Icon size={24} />
-                      </div>
-                      <span className="text-7xl font-bold text-on-primary/10">{s.num}</span>
-                    </div>
-                    <h3 className="text-2xl font-semibold mb-2">{s.title}</h3>
-                    <p className="text-on-primary/80 mb-md">{s.desc}</p>
-                    <div className="flex items-center font-bold gap-1">
-                      <span>Partner with us</span>
-                      <ArrowRight size={16} />
-                    </div>
-                  </div>
-                );
-              }
+          <div className="grid sm:grid-cols-2 gap-6">
+            {(getSection('services_list')?.content.items || []).map((service: any, index: number) => {
+              const Icon = icons[service.icon];
               return (
-                <div
-                  key={s.title}
-                  className="border border-outline-variant p-md hover:bg-surface-container-low transition-colors group cursor-pointer"
-                  onClick={() => navigate('/services')}
-                >
-                  <div className="p-3 bg-primary/10 text-primary w-fit mb-lg">
-                    <Icon size={24} />
-                  </div>
-                  <h3 className="text-xl font-semibold text-primary mb-2">{s.title}</h3>
-                  <p className="text-on-surface-variant text-sm">{s.desc}</p>
+                <div key={index} className={`p-6 rounded-xl transition-all ${index === 0 ? 'bg-surface-container-high' : 'hover:bg-surface-container-high'}`}>
+                  {Icon && <Icon className="w-8 h-8 text-primary mb-4" />}
+                  <h3 className="text-lg font-bold text-on-surface mb-2">{service.title}</h3>
+                  <p className="text-sm text-on-surface-variant leading-relaxed">{service.desc}</p>
                 </div>
-              );
+              )
             })}
           </div>
         </div>
       </section>
 
       {/* Values */}
-      <section className="py-xl bg-surface-container-low">
-        <div
-          ref={valuesRef}
-          className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop grid md:grid-cols-2 gap-lg items-center opacity-0 translate-y-6 transition-all duration-700"
-        >
-          <div className="order-2 md:order-1 relative overflow-hidden border border-outline-variant">
-            <img
-              src="https://images.pexels.com/photos/159358/construction-site-build-construction-work-159358.jpeg?auto=compress&cs=tinysrgb&w=800"
-              alt="Organised construction site showing logistics planning in action"
-              className="w-full h-auto grayscale opacity-90"
-            />
-          </div>
-
-          <div className="order-1 md:order-2 space-y-md">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary">
-              Experienced. Trusted. Delivery Focused.
-            </h2>
-            <p className="text-on-surface-variant leading-relaxed">
-              Supporting developers, contractors and consultants across London and the UK with buildable logistics strategies that keep projects moving.
+      <section ref={valuesRef} className="py-24 bg-surface opacity-0 translate-y-6 transition-all duration-700">
+        <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop text-center">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-bold text-primary mb-6">We Turn Logistics into an Asset</h2>
+            <p className="text-lg text-on-surface-variant leading-relaxed">
+              Our approach protects your programme, adds commercial value, and streamlines approvals by delivering clear, compliant, and buildable logistics strategies.
             </p>
-            <div className="grid grid-cols-2 gap-md">
-              {values.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="space-y-1">
-                  <div className="flex items-center gap-2 text-secondary">
-                    <Icon size={18} className="fill-secondary" />
-                    <span className="font-bold text-on-surface">{title}</span>
+          </div>
+          <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {(getSection('values_list')?.content.items || []).map((value: any, index: number) => {
+              const Icon = icons[value.icon];
+              return (
+                <div key={index}>
+                  <div className="w-16 h-16 bg-surface-container-high text-primary rounded-xl flex items-center justify-center mx-auto border border-outline-variant">
+                    {Icon && <Icon size={32} />}
                   </div>
-                  <p className="text-on-surface-variant text-sm pl-6">{desc}</p>
+                  <h3 className="text-xl font-bold text-on-surface mt-6 mb-2">{value.title}</h3>
+                  <p className="text-on-surface-variant">{value.desc}</p>
                 </div>
-              ))}
-            </div>
-            <button
-              onClick={() => navigate('/about')}
-              className="flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all pt-2"
-            >
-              Learn more about us <ArrowRight size={16} />
-            </button>
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* Qualities */}
-      <section className="py-xl bg-surface">
-        <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
-          <div className="text-center mb-lg">
-            <h2 className="text-3xl font-bold text-primary mb-2">Why Choose Kayon Designs?</h2>
-            <p className="text-on-surface-variant max-w-xl mx-auto">
-              We bring together technical expertise and practical experience to deliver logistics solutions that actually work on site.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-gutter">
-            {qualities.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="border border-outline-variant p-md text-center hover:border-primary transition-colors group">
-                <div className="w-12 h-12 flex items-center justify-center bg-primary/10 text-primary mx-auto mb-3 group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                  <Icon size={22} />
-                </div>
-                <h4 className="font-semibold text-primary mb-1">{title}</h4>
-                <p className="text-on-surface-variant text-sm">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Banner */}
-      <section className="bg-primary py-xl relative overflow-hidden">
+      {/* CTA */}
+      <section ref={ctaRef} className="py-24 bg-primary/5 opacity-0 translate-y-6 transition-all duration-700">
         <div className="absolute inset-0 opacity-10">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -365,6 +258,26 @@ export default function Home() {
               View Our Services
             </button>
           </div>
+        </div>
+      </section>
+
+      {/* Qualities */}
+      <section className="bg-surface">
+        <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-24 grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+          {(getSection('qualities_list')?.content.items || []).map((quality: any, index: number) => {
+            const Icon = icons[quality.icon];
+            return(
+              <div key={index} className="flex gap-6">
+                <div className="text-primary">
+                  {Icon && <Icon size={28} />}
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-on-surface mb-2">{quality.title}</h3>
+                  <p className="text-on-surface-variant text-sm leading-relaxed">{quality.desc}</p>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </section>
     </main>

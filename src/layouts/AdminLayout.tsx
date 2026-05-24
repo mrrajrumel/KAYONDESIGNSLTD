@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, Settings, Image as ImageIcon, Users, LogOut, Menu as MenuIcon, Briefcase, Mail, List, History } from 'lucide-react';
+import {
+  LayoutDashboard, FileText, Settings, Image as ImageIcon, Users, LogOut,
+  Menu as MenuIcon, Briefcase, Mail, List, History, ChevronDown
+} from 'lucide-react';
 import api from '../services/api';
 import DashboardOverview from '../pages/Admin/DashboardOverview';
 import PageManager from '../pages/Admin/PageManager';
@@ -11,7 +14,62 @@ import MediaManager from '../pages/Admin/MediaManager';
 import MessageManager from '../pages/Admin/MessageManager';
 import SettingsManager from '../pages/Admin/SettingsManager';
 import ActivityLogManager from '../pages/Admin/ActivityLogManager';
-import MenuManager from '../pages/Admin/MenuManager';
+
+const NavLink = ({ item, sidebarOpen }: { item: any, sidebarOpen: boolean }) => {
+  const location = useLocation();
+  const isActive = item.path === '/admin' ? location.pathname === item.path : location.pathname.startsWith(item.path);
+
+  return (
+    <Link
+      to={item.path}
+      className={`flex items-center px-4 py-3 text-sm font-medium transition-colors ${
+        isActive
+          ? 'bg-primary/10 text-primary border-r-4 border-primary'
+          : 'text-on-surface-variant hover:bg-gray-100 hover:text-on-surface'
+      }`}
+    >
+      <item.icon size={20} className="min-w-[20px]" />
+      {sidebarOpen && <span className="ml-3 truncate">{item.name}</span>}
+    </Link>
+  )
+};
+
+const Accordion = ({ title, icon: Icon, children, sidebarOpen }: { title: string, icon: any, children: React.ReactNode, sidebarOpen: boolean }) => {
+  const location = useLocation();
+  const hasActiveChild = React.Children.toArray(children).some((child: any) =>
+    location.pathname.startsWith(child.props.item.path)
+  );
+
+  const [isOpen, setIsOpen] = useState(hasActiveChild);
+
+  useEffect(() => {
+    setIsOpen(hasActiveChild);
+  }, [hasActiveChild]);
+
+  if (!sidebarOpen) {
+    return <div className="py-2">{children}</div>;
+  }
+
+  return (
+    <div>
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-on-surface-variant hover:bg-gray-100 hover:text-on-surface"
+      >
+        <div className="flex items-center">
+          <Icon size={20} className="min-w-[20px]" />
+          <span className="ml-3 truncate">{title}</span>
+        </div>
+        <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      {isOpen && (
+        <div className="pl-8 border-l border-gray-200 ml-6">
+          {children}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function AdminLayout() {
   const navigate = useNavigate();
@@ -29,18 +87,28 @@ export default function AdminLayout() {
     }
   };
 
-  const navItems = [
-    { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-    { name: 'Pages', path: '/admin/pages', icon: FileText },
-    { name: 'Menus', path: '/admin/menus', icon: MenuIcon },
-    { name: 'Categories', path: '/admin/categories', icon: List },
-    { name: 'Showcases', path: '/admin/showcases', icon: Briefcase },
-    { name: 'Media', path: '/admin/media', icon: ImageIcon },
-    { name: 'Messages', path: '/admin/messages', icon: Mail },
-    { name: 'Admins', path: '/admin/users', icon: Users },
-    { name: 'Activity Logs', path: '/admin/logs', icon: History },
-    { name: 'Settings', path: '/admin/settings', icon: Settings },
-  ];
+  const navItems = {
+    top: [
+      { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
+    ],
+    content: [
+      { name: 'Pages', path: '/admin/pages', icon: FileText },
+      { name: 'Menus', path: '/admin/menus', icon: MenuIcon },
+      { name: 'Media', path: '/admin/media', icon: ImageIcon },
+    ],
+    showcase: [
+      { name: 'Projects', path: '/admin/showcases', icon: Briefcase },
+      { name: 'Categories', path: '/admin/categories', icon: List },
+    ],
+    admin: [
+      { name: 'Users', path: '/admin/users', icon: Users },
+      { name: 'Activity Logs', path: '/admin/logs', icon: History },
+      { name: 'Settings', path: '/admin/settings', icon: Settings },
+    ],
+    other: [
+      { name: 'Messages', path: '/admin/messages', icon: Mail },
+    ]
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -54,23 +122,24 @@ export default function AdminLayout() {
         </div>
         
         <nav className="flex-1 overflow-y-auto py-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center px-4 py-3 text-sm font-medium transition-colors ${
-                location.pathname === item.path 
-                  ? 'bg-primary/10 text-primary border-r-4 border-primary' 
-                  : 'text-on-surface-variant hover:bg-gray-100 hover:text-on-surface'
-              }`}
-            >
-              <item.icon size={20} className="min-w-[20px]" />
-              {sidebarOpen && <span className="ml-3 truncate">{item.name}</span>}
-            </Link>
-          ))}
+          <NavLink item={navItems.top[0]} sidebarOpen={sidebarOpen} />
+          
+          <Accordion title="Showcase" icon={Briefcase} sidebarOpen={sidebarOpen}>
+            {navItems.showcase.map((item) => <NavLink key={item.path} item={item} sidebarOpen={sidebarOpen} />)}
+          </Accordion>
+
+          <Accordion title="Content" icon={FileText} sidebarOpen={sidebarOpen}>
+            {navItems.content.map((item) => <NavLink key={item.path} item={item} sidebarOpen={sidebarOpen} />)}
+          </Accordion>
+          
+          {navItems.other.map((item) => <NavLink key={item.path} item={item} sidebarOpen={sidebarOpen} />)}
+
+          <Accordion title="Administration" icon={Users} sidebarOpen={sidebarOpen}>
+            {navItems.admin.map((item) => <NavLink key={item.path} item={item} sidebarOpen={sidebarOpen} />)}
+          </Accordion>
         </nav>
 
-        <div className="p-4 border-t border-outline-variant">
+        <div className="p-4 border-t border-outline-variant mt-auto">
           <button 
             onClick={handleLogout}
             className="flex items-center text-red-600 hover:text-red-700 w-full px-2 py-2"

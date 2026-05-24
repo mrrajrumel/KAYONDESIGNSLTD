@@ -55,7 +55,13 @@ class PageController extends Controller
 
     public function showPublic($slug)
     {
-        $item = Page::where('slug', $slug)->where('status', 'published')->firstOrFail();
+        $item = Page::where('slug', $slug)->where('status', 'published')->with('sections')->firstOrFail();
+        return $this->successResponse($item);
+    }
+
+    public function showHome()
+    {
+        $item = Page::where('is_home', true)->where('status', 'published')->with('sections')->firstOrFail();
         return $this->successResponse($item);
     }
 }
