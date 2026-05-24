@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import {
   ClipboardList,
@@ -12,10 +13,6 @@ import {
   Target,
   TrendingUp,
 } from 'lucide-react';
-
-interface ServicesProps {
-  onNavigate: (page: string) => void;
-}
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -88,7 +85,8 @@ const qualities = [
   { icon: Target, title: 'Delivery Driven', desc: 'We plan for execution, not just approval. Every document is built around real-world site conditions.' },
 ];
 
-export default function Services({ onNavigate }: ServicesProps) {
+export default function Services() {
+  const navigate = useNavigate();
   const heroRef = useReveal();
   const servicesRef = useReveal();
   const qualitiesRef = useReveal();
@@ -218,7 +216,7 @@ export default function Services({ onNavigate }: ServicesProps) {
                 We support developers, contractors, and consultants across London and the UK. Our collaborative approach ensures that logistics are not an afterthought, but a core component of your project's DNA.
               </p>
               <button
-                onClick={() => onNavigate('contact')}
+                onClick={() => navigate('/contact')}
                 className="flex items-center gap-2 bg-primary text-on-primary px-8 py-3 font-semibold hover:opacity-90 transition-opacity"
               >
                 Book a Consultation <ArrowRight size={16} />
@@ -258,13 +256,13 @@ export default function Services({ onNavigate }: ServicesProps) {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-md">
             <button
-              onClick={() => onNavigate('contact')}
+              onClick={() => navigate('/contact')}
               className="bg-secondary text-on-secondary px-lg py-3 font-bold hover:opacity-90 transition-opacity"
             >
               Book a Consultation
             </button>
             <button
-              onClick={() => onNavigate('planning')}
+              onClick={() => navigate('/planning')}
               className="border border-on-primary text-on-primary px-lg py-3 font-bold hover:bg-on-primary/10 transition-colors"
             >
               Learn About Planning

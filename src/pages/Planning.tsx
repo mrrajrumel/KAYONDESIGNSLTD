@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import {
   ClipboardList,
@@ -11,10 +12,6 @@ import {
   MapPin,
   ArrowRight,
 } from 'lucide-react';
-
-interface PlanningProps {
-  onNavigate: (page: string) => void;
-}
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -88,7 +85,8 @@ const processSteps = [
   },
 ];
 
-export default function Planning({ onNavigate }: PlanningProps) {
+export default function Planning() {
+  const navigate = useNavigate();
   const heroRef = useReveal();
   const pillarsRef = useReveal();
   const processRef = useReveal();
@@ -137,7 +135,7 @@ export default function Planning({ onNavigate }: PlanningProps) {
               ))}
             </div>
             <button
-              onClick={() => onNavigate('contact')}
+              onClick={() => navigate('/contact')}
               className="bg-primary text-on-primary px-8 py-3 font-semibold hover:opacity-90 transition-opacity flex items-center gap-2"
             >
               Start Your Project <ArrowRight size={16} />
@@ -303,13 +301,13 @@ export default function Planning({ onNavigate }: PlanningProps) {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-md">
             <button
-              onClick={() => onNavigate('contact')}
+              onClick={() => navigate('/contact')}
               className="bg-secondary text-on-secondary px-lg py-3 font-bold hover:opacity-90 transition-opacity"
             >
               Request Planning Review
             </button>
             <button
-              onClick={() => onNavigate('services')}
+              onClick={() => navigate('/services')}
               className="border border-on-primary text-on-primary px-lg py-3 font-bold hover:bg-on-primary/10 transition-colors"
             >
               View Our Services

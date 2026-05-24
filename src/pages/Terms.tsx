@@ -75,7 +75,7 @@ Clear communication from the start makes for smoother projects.`,
 We can discuss payment arrangements if needed.`,
   },
   {
-    title: 'What We're Not Responsible For',
+    title: "What We're Not Responsible For",
     content: `Our services are consultancy-based:
 
 • We don't supervise site work or construction activities

@@ -1,12 +1,8 @@
 import { MapPin, Linkedin, Phone, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-interface FooterProps {
-  onNavigate: (page: string) => void;
-}
-
-export default function Footer({ onNavigate }: FooterProps) {
-  const handleNav = (page: string) => {
-    onNavigate(page);
+export default function Footer() {
+  const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -35,12 +31,13 @@ export default function Footer({ onNavigate }: FooterProps) {
             <ul className="space-y-2">
               {['CLPs', 'Swept Paths', 'Access Plans', 'Traffic Management', 'Tender Support'].map((s) => (
                 <li key={s}>
-                  <button
-                    onClick={() => handleNav('services')}
+                  <Link
+                    to="/services"
+                    onClick={scrollToTop}
                     className="text-on-surface-variant text-sm hover:text-primary transition-colors"
                   >
                     {s}
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -50,21 +47,22 @@ export default function Footer({ onNavigate }: FooterProps) {
             <h4 className="font-semibold text-sm text-primary uppercase tracking-widest mb-4">Company</h4>
             <ul className="space-y-2">
               {[
-                { label: 'About', page: 'about' },
-                { label: 'Planning', page: 'planning' },
-                { label: 'Contact', page: 'contact' },
+                { label: 'About', page: '/about' },
+                { label: 'Planning', page: '/planning' },
+                { label: 'Contact', page: '/contact' },
               ].map((item) => (
                 <li key={item.label}>
-                  <button
-                    onClick={() => handleNav(item.page)}
+                  <Link
+                    to={item.page}
+                    onClick={scrollToTop}
                     className="text-on-surface-variant text-sm hover:text-primary transition-colors"
                   >
                     {item.label}
-                  </button>
+                  </Link>
                 </li>
               ))}
               <li>
-                <a href="#" className="text-on-surface-variant text-sm hover:text-primary transition-colors flex items-center gap-1">
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-on-surface-variant text-sm hover:text-primary transition-colors flex items-center gap-1">
                   <Linkedin size={14} /> LinkedIn
                 </a>
               </li>
@@ -78,7 +76,7 @@ export default function Footer({ onNavigate }: FooterProps) {
               </li>
               <li className="flex items-center gap-2 text-on-surface-variant text-sm">
                 <Mail size={13} className="text-primary flex-shrink-0" />
-                <button onClick={() => handleNav('contact')} className="hover:text-primary transition-colors">Email Us</button>
+                <Link to="/contact" onClick={scrollToTop} className="hover:text-primary transition-colors">Email Us</Link>
               </li>
             </ul>
           </div>
@@ -86,11 +84,11 @@ export default function Footer({ onNavigate }: FooterProps) {
 
         <div className="border-t border-outline-variant pt-md flex flex-col md:flex-row justify-between items-center gap-3">
           <p className="text-on-surface-variant text-xs">
-            &copy; 2025 Kayon Designs Ltd. Construction Logistics &amp; Planning Consultancy. All rights reserved.
+            &copy; {new Date().getFullYear()} Kayon Designs Ltd. Construction Logistics &amp; Planning Consultancy. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <a href="#" className="text-on-surface-variant text-xs hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="#" className="text-on-surface-variant text-xs hover:text-primary transition-colors">Terms of Service</a>
+            <Link to="/privacy-policy" onClick={scrollToTop} className="text-on-surface-variant text-xs hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link to="/terms-of-service" onClick={scrollToTop} className="text-on-surface-variant text-xs hover:text-primary transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

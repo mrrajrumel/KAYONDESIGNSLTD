@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import {
   CheckCircle2,
@@ -8,10 +9,6 @@ import {
   MapPin,
   ArrowRight,
 } from 'lucide-react';
-
-interface AboutProps {
-  onNavigate: (page: string) => void;
-}
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -50,7 +47,8 @@ const values = [
   { icon: MapPin, title: 'London Based', desc: 'Headquartered in London with active projects across the city and wider UK regions.' },
 ];
 
-export default function About({ onNavigate }: AboutProps) {
+export default function About() {
+  const navigate = useNavigate();
   const heroRef = useReveal();
   const statsRef = useReveal();
   const valuesRef = useReveal();
@@ -90,13 +88,13 @@ export default function About({ onNavigate }: AboutProps) {
             </p>
             <div className="flex flex-wrap gap-3">
               <button
-                onClick={() => onNavigate('contact')}
+                onClick={() => navigate('/contact')}
                 className="bg-primary text-on-primary px-8 py-3 font-semibold hover:opacity-90 transition-opacity flex items-center gap-2"
               >
                 Work With Us <ArrowRight size={16} />
               </button>
               <button
-                onClick={() => onNavigate('services')}
+                onClick={() => navigate('/services')}
                 className="border border-primary text-primary px-8 py-3 font-semibold hover:bg-primary/5 transition-colors"
               >
                 Our Services
@@ -235,13 +233,13 @@ export default function About({ onNavigate }: AboutProps) {
           </div>
           <div className="flex flex-col sm:flex-row gap-md shrink-0">
             <button
-              onClick={() => onNavigate('contact')}
+              onClick={() => navigate('/contact')}
               className="bg-secondary text-on-secondary px-lg py-3 font-bold hover:opacity-90 transition-opacity"
             >
               Get in Touch
             </button>
             <button
-              onClick={() => onNavigate('services')}
+              onClick={() => navigate('/services')}
               className="border border-on-primary text-on-primary px-lg py-3 font-bold hover:bg-on-primary/10 transition-colors"
             >
               Our Services

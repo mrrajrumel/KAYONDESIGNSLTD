@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import {
   ClipboardList,
@@ -12,10 +13,6 @@ import {
   Target,
   TrendingUp,
 } from 'lucide-react';
-
-interface HomeProps {
-  onNavigate: (page: string) => void;
-}
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -87,7 +84,8 @@ const qualities = [
   { icon: Target, title: 'Delivery Driven', desc: 'Real-world solutions that keep your programme on track.' },
 ];
 
-export default function Home({ onNavigate }: HomeProps) {
+export default function Home() {
+  const navigate = useNavigate();
   const heroRef = useReveal();
   const servicesRef = useReveal();
   const valuesRef = useReveal();
@@ -129,13 +127,13 @@ export default function Home({ onNavigate }: HomeProps) {
             </div>
             <div className="flex flex-wrap gap-3 pt-2">
               <button
-                onClick={() => onNavigate('contact')}
+                onClick={() => navigate('/contact')}
                 className="bg-primary text-on-primary px-8 py-3 font-semibold hover:opacity-90 transition-opacity flex items-center gap-2"
               >
                 Get a Free Quote <ArrowRight size={16} />
               </button>
               <button
-                onClick={() => onNavigate('services')}
+                onClick={() => navigate('/services')}
                 className="border border-primary text-primary px-8 py-3 font-semibold hover:bg-primary/5 transition-colors"
               >
                 Our Services
@@ -201,7 +199,7 @@ export default function Home({ onNavigate }: HomeProps) {
                   <div
                     key={s.title}
                     className="md:col-span-2 border border-outline-variant p-md hover:bg-surface-container-low transition-colors group cursor-pointer relative overflow-hidden"
-                    onClick={() => onNavigate('services')}
+                    onClick={() => navigate('/services')}
                   >
                     <div className="flex justify-between items-start mb-lg">
                       <div className="p-3 bg-primary text-on-primary">
@@ -223,7 +221,7 @@ export default function Home({ onNavigate }: HomeProps) {
                   <div
                     key={s.title}
                     className="md:col-span-2 border border-primary bg-primary text-on-primary p-md cursor-pointer group"
-                    onClick={() => onNavigate('contact')}
+                    onClick={() => navigate('/contact')}
                   >
                     <div className="flex justify-between items-start mb-lg">
                       <div className="p-3 bg-white text-primary">
@@ -244,7 +242,7 @@ export default function Home({ onNavigate }: HomeProps) {
                 <div
                   key={s.title}
                   className="border border-outline-variant p-md hover:bg-surface-container-low transition-colors group cursor-pointer"
-                  onClick={() => onNavigate('services')}
+                  onClick={() => navigate('/services')}
                 >
                   <div className="p-3 bg-primary/10 text-primary w-fit mb-lg">
                     <Icon size={24} />
@@ -291,7 +289,7 @@ export default function Home({ onNavigate }: HomeProps) {
               ))}
             </div>
             <button
-              onClick={() => onNavigate('about')}
+              onClick={() => navigate('/about')}
               className="flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all pt-2"
             >
               Learn more about us <ArrowRight size={16} />
@@ -349,13 +347,13 @@ export default function Home({ onNavigate }: HomeProps) {
           </div>
           <div className="flex flex-col sm:flex-row gap-md shrink-0">
             <button
-              onClick={() => onNavigate('contact')}
+              onClick={() => navigate('/contact')}
               className="bg-secondary text-on-secondary px-lg py-3 font-bold hover:opacity-90 transition-opacity"
             >
               Request a Consultation
             </button>
             <button
-              onClick={() => onNavigate('services')}
+              onClick={() => navigate('/services')}
               className="border border-on-primary text-on-primary px-lg py-3 font-bold hover:bg-on-primary/10 transition-colors"
             >
               View Our Services

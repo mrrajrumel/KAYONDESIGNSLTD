@@ -1,0 +1,88 @@
+import { useState } from 'react';
+import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { LayoutDashboard, FileText, Settings, Image as ImageIcon, Users, LogOut, Menu as MenuIcon } from 'lucide-react';
+import api from '../services/api';
+
+export default function AdminLayout() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch {
+      // ignore
+    } finally {
+      localStorage.removeItem('admin_token');
+      navigate('/secure-admin-panel-login');
+    }
+  };
+
+  const navItems = [
+    { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
+    { name: 'Pages', path: '/admin/pages', icon: FileText },
+    { name: 'Media', path: '/admin/media', icon: ImageIcon },
+    { name: 'Admins', path: '/admin/users', icon: Users },
+    { name: 'Settings', path: '/admin/settings', icon: Settings },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <aside className={`bg-surface border-r border-outline-variant transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'} flex flex-col fixed md:relative z-20 h-full`}>
+        <div className="h-16 flex items-center justify-between px-4 border-b border-outline-variant">
+          {sidebarOpen && <span className="font-bold text-primary truncate">Admin Panel</span>}
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 text-on-surface hover:bg-gray-100 rounded">
+            <MenuIcon size={20} />
+          </button>
+        </div>
+        
+        <nav className="flex-1 overflow-y-auto py-4">
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex items-center px-4 py-3 text-sm font-medium transition-colors ${
+                location.pathname === item.path 
+                  ? 'bg-primary/10 text-primary border-r-4 border-primary' 
+                  : 'text-on-surface-variant hover:bg-gray-100 hover:text-on-surface'
+              }`}
+            >
+              <item.icon size={20} className="min-w-[20px]" />
+              {sidebarOpen && <span className="ml-3 truncate">{item.name}</span>}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="p-4 border-t border-outline-variant">
+          <button 
+            onClick={handleLogout}
+            className="flex items-center text-red-600 hover:text-red-700 w-full px-2 py-2"
+          >
+            <LogOut size={20} className="min-w-[20px]" />
+            {sidebarOpen && <span className="ml-3 font-medium">Logout</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-h-screen ml-20 md:ml-0 transition-all duration-300">
+        <header className="h-16 bg-white shadow-sm flex items-center px-6 sticky top-0 z-10">
+          <h2 className="text-xl font-semibold text-gray-800 capitalize">
+            {location.pathname.split('/').pop() || 'Dashboard'}
+          </h2>
+        </header>
+        <div className="flex-1 p-6 overflow-auto">
+          <Routes>
+            <Route path="/" element={<div className="bg-white p-6 rounded shadow-sm border border-gray-100"><h3 className="font-semibold text-lg">Dashboard Overview</h3><p className="mt-2 text-gray-600">Welcome to Kayon Designs CMS.</p></div>} />
+            <Route path="/pages" element={<div className="bg-white p-6 rounded shadow-sm border border-gray-100">Page Builder Coming Soon</div>} />
+            <Route path="/settings" element={<div className="bg-white p-6 rounded shadow-sm border border-gray-100">Settings UI Coming Soon</div>} />
+            <Route path="/media" element={<div className="bg-white p-6 rounded shadow-sm border border-gray-100">Media Manager Coming Soon</div>} />
+            <Route path="/users" element={<div className="bg-white p-6 rounded shadow-sm border border-gray-100">Admin User Management Coming Soon</div>} />
+          </Routes>
+        </div>
+      </main>
+    </div>
+  );
+}
