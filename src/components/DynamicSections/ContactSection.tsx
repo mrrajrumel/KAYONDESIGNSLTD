@@ -5,7 +5,7 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 
 
-export default function Contact() {
+export default function ContactSection({ data }: { data?: any }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -39,36 +39,18 @@ export default function Contact() {
   };
 
   return (
-    <main className="pt-20 bg-surface">
-      <SEO title="Contact Us" description="Get in touch with Kayon Designs for expert construction logistics planning and support." />
-      {/* Contact Header */}
-      <section className="relative bg-surface-container-lowest border-b border-outline-variant overflow-hidden">
-        <div className="absolute inset-0 opacity-5">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="cgrid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#707971" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#cgrid)" />
-          </svg>
-        </div>
-        <div
-          className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-xl text-center relative z-10 opacity-0 translate-y-6 transition-all duration-700"
-        >
-          <div className="inline-flex items-center px-3 py-1 bg-secondary-container text-on-secondary-container text-xs font-semibold tracking-widest uppercase mb-4">
-            London &amp; UK Wide
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-4 leading-tight">
-            Let's Talk About<br />Your Project.
-          </h1>
-          <p className="text-lg text-on-surface-variant max-w-lg mt-4">We are here to help with your project needs. Fill out the form below, and we will get back to you as soon as possible.</p>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-xl bg-surface">
-        <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop grid md:grid-cols-5 gap-lg opacity-0 translate-y-6 transition-all duration-700">
+    <section className="py-24 bg-surface relative" id="contact">
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="cgrid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#707971" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#cgrid)" />
+        </svg>
+      </div>
+      <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop grid md:grid-cols-5 gap-lg relative z-10">
           {/* Info */}
           <div className="md:col-span-2 space-y-md">
             <div>
@@ -205,22 +187,7 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Bottom strip */}
-      <section className="bg-surface-container-highest border-t border-outline-variant py-lg">
-        <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-center md:text-left">
-            <h3 className="font-bold text-primary text-lg">Supporting Developers, Contractors &amp; Consultants</h3>
-            <p className="text-on-surface-variant text-sm">Across London and the UK</p>
-          </div>
-          <div className="flex flex-wrap gap-4 justify-center">
-            {['Buildable.', 'Compliant.', 'Efficient.'].map((word) => (
-              <div key={word} className="border-l-4 border-primary pl-3">
-                <span className="font-bold text-primary">{word}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </main>
+      </div>
+    </section>
   );
 }

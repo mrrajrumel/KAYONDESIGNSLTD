@@ -14,11 +14,11 @@ class MenuSeeder extends Seeder
             [
                 'name' => 'Main Navigation',
                 'items' => [
-                    ['label' => 'Home', 'url' => '/'],
-                    ['label' => 'About', 'url' => '/about'],
-                    ['label' => 'Services', 'url' => '/services'],
-                    ['label' => 'Planning', 'url' => '/planning'],
-                    ['label' => 'Contact', 'url' => '/contact'],
+                    ['label' => 'Home', 'url' => '/#hero'],
+                    ['label' => 'About', 'url' => '/#about'],
+                    ['label' => 'Services', 'url' => '/#services'],
+                    ['label' => 'Planning Showcase', 'url' => '/#showcase'],
+                    ['label' => 'Contact', 'url' => '/#contact'],
                 ]
             ]
         );
@@ -28,10 +28,11 @@ class MenuSeeder extends Seeder
             [
                 'name' => 'Footer Links',
                 'items' => [
-                    ['label' => 'About Us', 'url' => '/about'],
-                    ['label' => 'Our Services', 'url' => '/services'],
-                    ['label' => 'Planning', 'url' => '/planning'],
-                    ['label' => 'Contact', 'url' => '/contact'],
+                    ['label' => 'Home', 'url' => '/#hero'],
+                    ['label' => 'About', 'url' => '/#about'],
+                    ['label' => 'Services', 'url' => '/#services'],
+                    ['label' => 'Planning Showcase', 'url' => '/#showcase'],
+                    ['label' => 'Contact', 'url' => '/#contact'],
                     ['label' => 'Privacy Policy', 'url' => '/privacy-policy'],
                     ['label' => 'Terms of Service', 'url' => '/terms-of-service'],
                 ]

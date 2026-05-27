@@ -38,8 +38,10 @@ export default function Home() {
         </div>
       )}
 
-      {/* Dynamic Work Showcase Section is hardcoded here as requested but we can also make it a widget later */}
-      <WorkShowcaseSection />
+      {/* Dynamic Work Showcase Section */}
+      <div id="showcase">
+        <WorkShowcaseSection />
+      </div>
     </main>
   );
 }

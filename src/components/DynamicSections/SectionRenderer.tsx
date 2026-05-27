@@ -2,6 +2,7 @@ import React from 'react';
 import HeroSection from './HeroSection';
 import FeaturesSection from './FeaturesSection';
 import CTASection from './CTASection';
+import ContactSection from './ContactSection';
 
 const componentMap: Record<string, React.FC<any>> = {
   hero: HeroSection,
@@ -10,6 +11,7 @@ const componentMap: Record<string, React.FC<any>> = {
   services_list: FeaturesSection,
   values_list: FeaturesSection,
   qualities_list: FeaturesSection,
+  contact: ContactSection,
   // Add more as needed
 };
 
@@ -20,5 +22,12 @@ export default function SectionRenderer({ section }: { section: any }) {
     return <div className="py-10 text-center text-red-500">Unknown section type: {section.type}</div>;
   }
 
-  return <Component data={section.content} />;
+  // Create an ID based on section name so hash links (/#about) scroll perfectly to it
+  const sectionId = section.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || `section-${section.id}`;
+
+  return (
+    <div id={sectionId}>
+      <Component data={section.content} />
+    </div>
+  );
 }

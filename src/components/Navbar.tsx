@@ -31,9 +31,11 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNav = () => {
+  const handleNav = (isHomeLogo = false) => {
     setIsOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (isHomeLogo) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -45,7 +47,7 @@ export default function Navbar() {
       <div className="flex justify-between items-center h-20 px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto">
         <Link
           to="/"
-          onClick={handleNav}
+          onClick={() => handleNav(true)}
           className="flex items-center gap-2 group"
           aria-label={`${siteName} Home`}
         >
@@ -72,7 +74,7 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            to="/contact"
+            to="/#contact"
             className="bg-primary text-on-primary px-8 py-3 text-xs font-black tracking-[0.15em] uppercase hover:opacity-90 transition-all shadow-lg shadow-primary/20"
           >
             Get Started
@@ -81,8 +83,8 @@ export default function Navbar() {
 
         <div className="flex items-center gap-3">
           <Link
-            to="/contact"
-            onClick={handleNav}
+            to="/#contact"
+            onClick={() => handleNav(false)}
             className="hidden md:block bg-primary text-on-primary px-5 py-2 text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             Get a Quote
@@ -116,8 +118,8 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            to="/contact"
-            onClick={handleNav}
+            to="/#contact"
+            onClick={() => handleNav(false)}
             className="mt-2 bg-primary text-on-primary px-5 py-3 text-center font-semibold text-sm hover:opacity-90"
           >
             Get a Quote
