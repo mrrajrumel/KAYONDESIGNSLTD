@@ -95,67 +95,77 @@ export default function PageBuilder({ pageId, onBack }: { pageId: number, onBack
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4">
-          <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gap-4">
+        <div className="flex items-center gap-5">
+          <button onClick={onBack} className="p-2.5 bg-gray-50 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-xl transition-all">
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h2 className="text-xl font-bold text-gray-800">Page Builder: {page?.title}</h2>
-            <p className="text-sm text-gray-500">/{page?.slug}</p>
+            <h2 className="text-2xl font-black text-gray-900 tracking-tight">Page Builder: {page?.title}</h2>
+            <p className="text-sm font-medium text-gray-500 mt-0.5 flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-green-500"></span>
+              Live URL: <span className="text-primary bg-primary/5 px-2 py-0.5 rounded ml-1">/{page?.slug}</span>
+            </p>
           </div>
         </div>
         <div className="flex gap-2">
           <select 
-            className="border border-gray-300 rounded px-3 py-2 text-sm"
+            className="border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-700 outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all cursor-pointer bg-gray-50 hover:bg-white"
             onChange={(e) => { if(e.target.value) addSection(e.target.value); e.target.value = ''; }}
           >
-            <option value="">+ Add Section</option>
-            <option value="hero">Hero Section</option>
-            <option value="features">Features List</option>
-            <option value="cta">Call to Action</option>
-            <option value="services_list">Services Grid</option>
+            <option value="">+ Add New Section</option>
+            <option value="hero">⭐ Hero Section</option>
+            <option value="features">📋 Features Grid</option>
+            <option value="cta">🎯 Call to Action</option>
+            <option value="services_list">🛠️ Services List</option>
           </select>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-4">
           {sections.map((section, index) => (
-            <div key={section.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div key={section.id} className={`bg-white p-5 rounded-2xl shadow-sm border-2 transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${editingSection?.id === section.id ? 'border-primary shadow-primary/10' : 'border-gray-100 hover:border-gray-200'}`}>
               <div className="flex items-center gap-4">
-                <div className="flex flex-col gap-1 text-gray-400">
-                  <button onClick={() => moveSection(index, 'up')} disabled={index === 0} className="hover:text-primary disabled:opacity-30">▲</button>
-                  <button onClick={() => moveSection(index, 'down')} disabled={index === sections.length - 1} className="hover:text-primary disabled:opacity-30">▼</button>
+                <div className="flex flex-col gap-1 text-gray-300">
+                  <button onClick={() => moveSection(index, 'up')} disabled={index === 0} className="hover:text-primary disabled:opacity-20 transition-colors">▲</button>
+                  <button onClick={() => moveSection(index, 'down')} disabled={index === sections.length - 1} className="hover:text-primary disabled:opacity-20 transition-colors">▼</button>
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-800">{section.name}</h3>
-                  <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">{section.type}</span>
+                  <h3 className="font-bold text-gray-900 text-lg tracking-tight">{section.name}</h3>
+                  <span className="text-xs font-bold uppercase tracking-widest bg-gray-100 px-2.5 py-1 rounded-md text-gray-500 mt-1 inline-block">{section.type}</span>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => setEditingSection(section)}
-                  className="flex items-center gap-1 text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded">
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${editingSection?.id === section.id ? 'bg-primary text-white shadow-md' : 'text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100'}`}>
                   <Settings size={16} /> Edit Content
                 </button>
                 <button 
                   onClick={() => deleteSection(section.id)}
-                  className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded">
+                  className="text-red-500 hover:text-white hover:bg-red-500 p-2 rounded-lg transition-colors border border-transparent hover:border-red-600">
                   <Trash2 size={18} />
                 </button>
               </div>
             </div>
           ))}
           {sections.length === 0 && (
-            <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-100 text-gray-500">
-              No sections added yet. Add a section to build your page.
+            <div className="text-center py-16 bg-white rounded-2xl shadow-sm border-2 border-dashed border-gray-200 text-gray-400">
+              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Settings size={24} className="text-gray-300" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">No Sections Yet</h3>
+              <p className="text-sm font-medium">Select a section from the dropdown above to start building.</p>
             </div>
           )}
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-fit sticky top-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+        <div className="bg-white p-6 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 h-fit sticky top-28">
+          <h3 className="text-xl font-black text-gray-900 mb-6 border-b border-gray-100 pb-4 flex items-center gap-2">
+            <span className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <Settings size={18} />
+            </span>
             {editingSection ? `Edit: ${editingSection.name}` : 'Editor Panel'}
           </h3>
           

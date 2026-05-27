@@ -23,13 +23,13 @@ const NavLink = ({ item, sidebarOpen }: { item: any, sidebarOpen: boolean }) => 
   return (
     <Link
       to={item.path}
-      className={`flex items-center px-4 py-3 text-sm font-medium transition-colors ${
+      className={`flex items-center px-4 py-3 mx-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
         isActive
-          ? 'bg-primary/10 text-primary border-r-4 border-primary'
-          : 'text-on-surface-variant hover:bg-gray-100 hover:text-on-surface'
+          ? 'bg-primary text-white shadow-md shadow-primary/20'
+          : 'text-gray-600 hover:bg-gray-100 hover:text-primary'
       }`}
     >
-      <item.icon size={20} className="min-w-[20px]" />
+      <item.icon size={18} className={`min-w-[18px] transition-transform duration-300 ${isActive ? 'scale-110' : ''}`} />
       {sidebarOpen && <span className="ml-3 truncate">{item.name}</span>}
     </Link>
   )
@@ -63,19 +63,19 @@ const Accordion = ({ title, icon: Icon, children, sidebarOpen }: { title: string
     <div>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-on-surface-variant hover:bg-gray-100 hover:text-on-surface"
+        className="w-full flex items-center justify-between px-6 py-3 mx-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-primary rounded-lg transition-colors"
       >
         <div className="flex items-center">
-          <Icon size={20} className="min-w-[20px]" />
+          <Icon size={18} className="min-w-[18px]" />
           <span className="ml-3 truncate">{title}</span>
         </div>
-        <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown size={14} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
-      {isOpen && (
-        <div className="pl-8 border-l border-gray-200 ml-6">
+      <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className="pl-6 border-l-2 border-gray-100 ml-8 my-1 space-y-1">
           {children}
         </div>
-      )}
+      </div>
     </div>
   )
 }
@@ -122,15 +122,15 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <aside className={`bg-surface border-r border-outline-variant transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'} flex flex-col fixed md:relative z-20 h-full`}>
-        <div className="h-16 flex items-center justify-between px-4 border-b border-outline-variant">
-          {sidebarOpen && <span className="font-bold text-primary truncate">Admin Panel</span>}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 text-on-surface hover:bg-gray-100 rounded">
+      <aside className={`bg-white border-r border-gray-100 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'} flex flex-col fixed md:relative z-20 h-full shadow-lg shadow-gray-200/40`}>
+        <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 bg-white">
+          {sidebarOpen && <span className="font-black text-primary tracking-tighter text-xl truncate">Kayon<span className="text-secondary">CMS</span></span>}
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors">
             <MenuIcon size={20} />
           </button>
         </div>
         
-        <nav className="flex-1 overflow-y-auto py-4">
+        <nav className="flex-1 overflow-y-auto py-6 space-y-1">
           <NavLink item={navItems.top[0]} sidebarOpen={sidebarOpen} />
           
           <Accordion title="Showcase" icon={Briefcase} sidebarOpen={sidebarOpen}>
@@ -162,14 +162,22 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-h-screen ml-20 md:ml-0 transition-all duration-300">
-        <header className="h-16 bg-white shadow-sm flex items-center px-6 sticky top-0 z-10">
-          <h2 className="text-xl font-semibold text-gray-800 capitalize">
+      <main className="flex-1 flex flex-col min-h-screen ml-20 md:ml-0 transition-all duration-300 bg-[#f8fafd]">
+        <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-10 shadow-sm">
+          <h2 className="text-xl font-bold text-gray-800 capitalize tracking-tight">
             {location.pathname === '/admin' ? 'Dashboard' : location.pathname.split('/').pop()}
           </h2>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-3 py-1.5 rounded-lg transition-colors">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary text-white flex items-center justify-center font-bold text-sm shadow-md">
+                KD
+              </div>
+              <span className="text-sm font-bold text-gray-700 hidden sm:block">Admin</span>
+            </div>
+          </div>
         </header>
-        <div className="flex-1 p-6 overflow-auto">
-          <Suspense fallback={<div className="text-center p-12">Loading page...</div>}>
+        <div className="flex-1 p-8 overflow-auto">
+          <Suspense fallback={<div className="flex h-[60vh] items-center justify-center"><div className="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full" /></div>}>
             <Routes>
               <Route path="/" element={<DashboardOverview />} />
               <Route path="/pages" element={<PageManager />} />
