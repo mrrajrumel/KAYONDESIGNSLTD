@@ -1,11 +1,13 @@
-import { Edit, Trash2, Plus, X } from 'lucide-react';
+import { Edit, Trash2, Plus, X, Layout } from 'lucide-react';
 import useApi from '../../hooks/useApi';
 import { useState, useEffect } from 'react';
+import PageBuilder from './PageBuilder';
 
 export default function PageManager() {
   const { data: pages, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/pages' });
   
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [builderPageId, setBuilderPageId] = useState<number | null>(null);
   const [editingPage, setEditPage] = useState<any>(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -69,6 +71,10 @@ export default function PageManager() {
 
   if (loading) return <div>Loading...</div>;
 
+  if (builderPageId) {
+    return <PageBuilder pageId={builderPageId} onBack={() => setBuilderPageId(null)} />;
+  }
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -101,6 +107,12 @@ export default function PageManager() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
+                    <button 
+                      onClick={() => setBuilderPageId(page.id)}
+                      className="text-indigo-600 hover:text-indigo-800 mr-3"
+                      title="Open Page Builder">
+                      <Layout size={18} />
+                    </button>
                     <button 
                       onClick={() => openModal(page)}
                       className="text-blue-600 hover:text-blue-800 mr-3">

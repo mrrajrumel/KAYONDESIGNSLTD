@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
     
     Route::apiResource('pages', PageController::class);
+    Route::post('/sections/reorder', [SectionController::class, 'reorder']);
     Route::apiResource('sections', SectionController::class);
     Route::apiResource('widgets', WidgetController::class);
     Route::apiResource('menus', MenuController::class);

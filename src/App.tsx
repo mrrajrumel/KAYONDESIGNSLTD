@@ -2,17 +2,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
-import Services from './pages/Services';
-import Planning from './pages/Planning';
-import About from './pages/About';
 import Contact from './pages/Contact';
-import Privacy from './pages/Privacy';
-import Terms from './pages/Terms';
 import ProtectedRoute from './components/Admin/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
 import { HelmetProvider } from 'react-helmet-async';
 import { useSettingsStore } from './store/useSettingsStore';
 import React, { useEffect, Suspense } from 'react';
+import DynamicPage from './components/DynamicPage';
 
 const AdminLogin = React.lazy(() => import('./pages/Admin/AdminLogin'));
 const AdminLayout = React.lazy(() => import('./layouts/AdminLayout'));
@@ -41,12 +37,8 @@ export default function App() {
         <Routes>
           {/* Public Routes - Use MainLayout with public Navbar/Footer */}
           <Route path="/" element={<MainLayout><Home /></MainLayout>} />
-          <Route path="/services" element={<MainLayout><Services /></MainLayout>} />
-          <Route path="/planning" element={<MainLayout><Planning /></MainLayout>} />
-          <Route path="/about" element={<MainLayout><About /></MainLayout>} />
           <Route path="/contact" element={<MainLayout><Contact /></MainLayout>} />
-          <Route path="/privacy-policy" element={<MainLayout><Privacy /></MainLayout>} />
-          <Route path="/terms-of-service" element={<MainLayout><Terms /></MainLayout>} />
+          <Route path="/:slug" element={<MainLayout><DynamicPage /></MainLayout>} />
 
           {/* Admin Login - No Navbar/Footer */}
           <Route path="/secure-admin-panel-login" element={

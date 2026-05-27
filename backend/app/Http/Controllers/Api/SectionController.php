@@ -34,6 +34,21 @@ class SectionController extends Controller
         return $this->successResponse($item, 'Updated successfully');
     }
 
+    public function reorder(Request $request)
+    {
+        $request->validate([
+            'sections' => 'required|array',
+            'sections.*.id' => 'required|exists:sections,id',
+            'sections.*.order' => 'required|integer',
+        ]);
+
+        foreach ($request->sections as $sectionData) {
+            Section::where('id', $sectionData['id'])->update(['order' => $sectionData['order']]);
+        }
+
+        return $this->successResponse(null, 'Sections reordered successfully');
+    }
+
     public function destroy($id)
     {
         $item = Section::findOrFail($id);

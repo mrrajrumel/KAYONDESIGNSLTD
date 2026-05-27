@@ -11,6 +11,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminSeeder::class,
             HomePageSeeder::class,
+            DefaultPagesSeeder::class,
+            MenuSeeder::class,
         ]);
     }
 }
