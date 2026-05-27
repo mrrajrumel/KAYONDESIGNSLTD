@@ -11,13 +11,20 @@ export default function WorkShowcaseSection() {
 
   useEffect(() => {
     Promise.all([
-      api.get('/showcases'),
-      api.get('/categories')
+      api.get('/public/showcases'),
+      api.get('/public/categories')
     ]).then(([showcaseRes, categoryRes]) => {
-      setShowcases(showcaseRes.data.data || []);
-      setCategories(categoryRes.data.data || []);
+      // Ensure we extract the array properly whether it's wrapped or not
+      const showcaseData = showcaseRes.data?.data || showcaseRes.data || [];
+      const categoryData = categoryRes.data?.data || categoryRes.data || [];
+      
+      setShowcases(Array.isArray(showcaseData) ? showcaseData : []);
+      setCategories(Array.isArray(categoryData) ? categoryData : []);
       setLoading(false);
-    }).catch(console.error);
+    }).catch((err) => {
+      console.error(err);
+      setLoading(false);
+    });
   }, []);
 
   const filteredShowcases = activeCategory 

@@ -11,7 +11,7 @@ export default function DynamicPage() {
 
   useEffect(() => {
     setLoading(true);
-    api.get(`/pages/${slug}`)
+    api.get(`/public/pages/${slug}`)
       .then((res: any) => setPageData(res.data.data))
       .catch((err: any) => {
         console.error("Failed to fetch page:", err);
