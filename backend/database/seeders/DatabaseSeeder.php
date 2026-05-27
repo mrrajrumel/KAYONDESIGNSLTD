@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminSeeder::class,
+            WebsiteSettingSeeder::class,
             HomePageSeeder::class,
             DefaultPagesSeeder::class,
             MenuSeeder::class,
