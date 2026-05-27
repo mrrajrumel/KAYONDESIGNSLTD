@@ -30,13 +30,16 @@ export default function Footer() {
           {/* Brand */}
           <div className="space-y-6">
             <Link to="/" className="inline-flex items-center gap-2 group">
-              <img src={logo || "/logo.png"} alt={siteName} className="h-10 w-auto object-contain" />
-              <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tighter text-primary leading-none">{siteName.split(' ')[0]}</span>
-                <span className="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase leading-none">{siteName.split(' ').slice(1).join(' ')}</span>
-              </div>
+              {logo ? (
+                <img src={logo} alt={siteName} className="h-10 w-auto object-contain transition-transform group-hover:scale-105" />
+              ) : (
+                <div className="flex flex-col">
+                  <span className="text-xl font-black tracking-tighter text-primary leading-none">{siteName?.split(' ')[0]}</span>
+                  <span className="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase leading-none">{siteName?.split(' ').slice(1).join(' ')}</span>
+                </div>
+              )}
             </Link>
-            <p className="text-on-surface-variant text-sm leading-relaxed max-w-xs">
+            <p className="text-on-surface-variant text-sm leading-relaxed max-w-xs font-medium">
               {siteDescription || "Professional construction logistics planning and strategic support for developers across London and the UK."}
             </p>
             <div className="flex items-center gap-2 text-on-surface-variant text-sm">

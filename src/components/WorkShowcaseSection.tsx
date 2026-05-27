@@ -52,10 +52,10 @@ export default function WorkShowcaseSection() {
         </div>
 
         {/* Categories Filter */}
-        <div className="flex overflow-x-auto pb-4 mb-8 gap-4 scrollbar-hide">
+        <div className="flex overflow-x-auto pb-4 mb-10 gap-3 scrollbar-hide">
           <button
             onClick={() => setActiveCategory(null)}
-            className={`whitespace-nowrap px-6 py-2 rounded-full border transition-all ${activeCategory === null ? 'bg-primary text-white border-primary' : 'bg-transparent text-on-surface border-outline hover:border-primary'}`}
+            className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 ${activeCategory === null ? 'bg-primary text-white shadow-md' : 'bg-surface text-on-surface-variant hover:bg-gray-100'}`}
           >
             All Projects
           </button>
@@ -63,7 +63,7 @@ export default function WorkShowcaseSection() {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`whitespace-nowrap px-6 py-2 rounded-full border transition-all ${activeCategory === cat.id ? 'bg-primary text-white border-primary' : 'bg-transparent text-on-surface border-outline hover:border-primary'}`}
+              className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 ${activeCategory === cat.id ? 'bg-primary text-white shadow-md' : 'bg-surface text-on-surface-variant hover:bg-gray-100'}`}
             >
               {cat.title}
             </button>
@@ -71,12 +71,12 @@ export default function WorkShowcaseSection() {
         </div>
 
         {/* Showcase Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
           {filteredShowcases.map(item => (
-            <div key={item.id} className="group relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all border border-outline-variant">
+            <div key={item.id} className="group relative overflow-hidden rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 border border-outline-variant/30 flex flex-col">
               <div className="aspect-[4/3] overflow-hidden bg-gray-100 relative">
                 {item.featured_image ? (
-                  <img src={item.featured_image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <img src={item.featured_image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
                     <ImageIcon size={48} className="mb-2 opacity-20" />
@@ -84,17 +84,17 @@ export default function WorkShowcaseSection() {
                   </div>
                 )}
                 {item.is_featured && (
-                  <div className="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-lg">
+                  <div className="absolute top-4 right-4 bg-secondary text-on-secondary-fixed px-3 py-1.5 rounded text-[10px] font-black uppercase tracking-widest shadow-lg">
                     Featured
                   </div>
                 )}
               </div>
-              <div className="p-6">
-                <span className="text-[10px] font-bold text-secondary mb-2 block uppercase tracking-[0.2em]">{item.category?.title || 'General'}</span>
-                <h3 className="text-xl font-bold text-primary mb-3 leading-tight">{item.title}</h3>
-                <p className="text-sm text-on-surface-variant line-clamp-2 leading-relaxed mb-6">{item.description}</p>
-                <Link to="/planning" className="inline-flex items-center gap-2 text-xs font-black text-primary uppercase tracking-widest hover:gap-3 transition-all">
-                  Project Details <ArrowRight size={14} />
+              <div className="p-8 flex-1 flex flex-col">
+                <span className="text-[10px] font-black text-secondary mb-3 block uppercase tracking-[0.2em]">{item.category?.title || 'General'}</span>
+                <h3 className="text-2xl font-black text-primary mb-4 leading-tight group-hover:text-secondary transition-colors">{item.title}</h3>
+                <p className="text-sm text-on-surface-variant line-clamp-3 leading-relaxed mb-8 flex-1">{item.description}</p>
+                <Link to={`/planning`} className="inline-flex items-center gap-2 text-xs font-black text-primary uppercase tracking-widest hover:gap-3 transition-all mt-auto group-hover:text-secondary">
+                  Project Details <ArrowRight size={16} />
                 </Link>
               </div>
             </div>
