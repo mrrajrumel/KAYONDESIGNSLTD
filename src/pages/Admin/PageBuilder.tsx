@@ -219,7 +219,7 @@ export default function PageBuilder({ pageId, onBack }: { pageId: number, onBack
               <button 
                 onClick={() => {
                   try {
-                    let parsed = JSON.parse((document.getElementById('json-editor') as HTMLTextAreaElement).value);
+                    const parsed = JSON.parse((document.getElementById('json-editor') as HTMLTextAreaElement).value);
                     
                     // Merge visual fields
                     parsed.title = (document.getElementById('field-title') as HTMLInputElement).value;

@@ -1,13 +1,18 @@
-import { Edit, Trash2, Plus, Image as ImageIcon, X } from 'lucide-react';
+import { Edit, Trash2, Plus, Image as ImageIcon, X, Upload } from 'lucide-react';
 import useApi from '../../hooks/useApi';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import toast from 'react-hot-toast';
+import api from '../../services/api';
 
 export default function ShowcaseManager() {
-  const { data: showcases, loading, deleteItem, createItem, updateItem } = useApi<any>({ initialUrl: '/showcases' });
+  const { data: showcases, loading, deleteItem, createItem, updateItem, fetchData } = useApi<any>({ initialUrl: '/showcases' });
   const { data: categories } = useApi<any>({ initialUrl: '/categories' });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingShowcase, setEditingShowcase] = useState<any>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -54,6 +59,34 @@ export default function ShowcaseManager() {
       });
     }
     setIsModalOpen(true);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const form = new FormData();
+    form.append('files[]', file);
+
+    setIsUploading(true);
+    const toastId = toast.loading('Uploading image...');
+    
+    try {
+      const res = await api.post('/media', form, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      const uploadedUrl = res.data.data[0].file_path;
+      setFormData(prev => ({ ...prev, featured_image: uploadedUrl }));
+      toast.success('Image uploaded successfully', { id: toastId });
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to upload image', { id: toastId });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -187,14 +220,44 @@ export default function ShowcaseManager() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Featured Image URL</label>
-                  <input 
-                    type="text" 
-                    value={formData.featured_image} 
-                    onChange={e => setFormData({...formData, featured_image: e.target.value})}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-primary focus:border-primary outline-none" 
-                    placeholder="https://..."
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
+                  <div className="flex flex-col gap-3">
+                    {formData.featured_image && (
+                      <div className="relative w-full h-40 rounded-lg overflow-hidden border border-gray-200">
+                        <img src={formData.featured_image} alt="Featured" className="w-full h-full object-cover" />
+                        <button 
+                          type="button"
+                          onClick={() => setFormData({...formData, featured_image: ''})}
+                          className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors shadow-sm"
+                          title="Remove image"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    )}
+                    
+                    <div className={`border-2 border-dashed ${formData.featured_image ? 'border-gray-200 bg-gray-50' : 'border-primary/30 bg-primary/5'} rounded-lg p-6 text-center hover:bg-primary/10 transition-colors cursor-pointer relative`}>
+                      <input 
+                        type="file" 
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        accept="image/*"
+                        disabled={isUploading}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                      />
+                      <div className="flex flex-col items-center justify-center text-gray-500 gap-2">
+                        {isUploading ? (
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        ) : (
+                          <>
+                            <Upload size={24} className="text-primary" />
+                            <span className="text-sm font-medium">{formData.featured_image ? 'Change Image' : 'Click or drag image to upload'}</span>
+                            <span className="text-xs text-gray-400">PNG, JPG, WEBP up to 5MB</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 

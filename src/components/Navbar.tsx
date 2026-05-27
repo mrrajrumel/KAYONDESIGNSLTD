@@ -47,13 +47,16 @@ export default function Navbar() {
           to="/"
           onClick={handleNav}
           className="flex items-center gap-2 group"
-          aria-label="Kayon Designs Ltd Home"
+          aria-label={`${siteName} Home`}
         >
-          <img src={logo || "/logo.png"} alt={siteName} className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-105" />
-          <div className="flex flex-col">
-            <span className="text-xl md:text-2xl font-black tracking-tighter text-primary leading-none">{siteName.split(' ')[0]}</span>
-            <span className="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase leading-none">{siteName.split(' ').slice(1).join(' ')}</span>
-          </div>
+          {logo ? (
+            <img src={logo} alt={siteName} className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-105" />
+          ) : (
+            <div className="flex flex-col">
+              <span className="text-xl md:text-2xl font-black tracking-tighter text-primary leading-none">{siteName.split(' ')[0]}</span>
+              <span className="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase leading-none">{siteName.split(' ').slice(1).join(' ')}</span>
+            </div>
+          )}
         </Link>
 
         {/* Desktop Nav */}
