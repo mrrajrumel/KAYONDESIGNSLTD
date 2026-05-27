@@ -4,10 +4,15 @@ import FeaturesSection from './FeaturesSection';
 import CTASection from './CTASection';
 import ContactSection from './ContactSection';
 
+import AboutSection from './AboutSection';
+import ServicesSection from './ServicesSection';
+
 const componentMap: Record<string, React.FC<any>> = {
   hero: HeroSection,
   features: FeaturesSection,
   cta: CTASection,
+  about: AboutSection,
+  services: ServicesSection,
   services_list: FeaturesSection,
   values_list: FeaturesSection,
   qualities_list: FeaturesSection,

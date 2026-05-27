@@ -50,58 +50,20 @@ class HomePageSeeder extends Seeder
         Section::create([
             'page_id' => $homePage->id,
             'name' => 'About',
-            'type' => 'features',
+            'type' => 'about',
             'order' => 2,
             'is_active' => true,
-            'content' => [
-                'title' => 'About Kayon Designs',
-                'description' => 'We are an industry-leading construction logistics consultancy. We provide comprehensive logistics plans tailored to secure planning approvals and ensure site feasibility for any development across London and the UK.',
-                'items' => [
-                    ['icon' => 'CheckCircle2', 'title' => 'Reduce Risk', 'desc' => 'Identifying bottlenecks before they impact your programme.'],
-                    ['icon' => 'TrendingUp', 'title' => 'Improve Approvals', 'desc' => 'Expert knowledge of local authority requirements.'],
-                    ['icon' => 'Zap', 'title' => 'Save Time', 'desc' => 'Streamlined processes developed through years of experience.'],
-                ]
-            ]
+            'content' => []
         ]);
 
         // 5. Seed Services Section
         Section::create([
             'page_id' => $homePage->id,
             'name' => 'Services',
-            'type' => 'services_list',
+            'type' => 'services',
             'order' => 3,
             'is_active' => true,
-            'content' => [
-                'title' => 'Our Core Services',
-                'description' => 'Explore our specialized logistics and planning support solutions.',
-                'items' => [
-                    [
-                        'icon' => 'ClipboardList',
-                        'title' => 'CLPs',
-                        'desc' => 'Comprehensive Construction Logistics Plans tailored to secure planning approvals and ensure site feasibility.',
-                    ],
-                    [
-                        'icon' => 'Truck',
-                        'title' => 'Swept Paths',
-                        'desc' => 'Vehicle tracking analysis for precise site access and clearance verification across all vehicle types.',
-                    ],
-                    [
-                        'icon' => 'Map',
-                        'title' => 'Access Plans',
-                        'desc' => 'Strategic entry and exit route design for optimal site efficiency and pedestrian safety.',
-                    ],
-                    [
-                        'icon' => 'TrafficCone',
-                        'title' => 'Traffic Management',
-                        'desc' => 'Advanced planning for urban streetworks and complex logistics coordination in busy city environments.',
-                    ],
-                    [
-                        'icon' => 'Handshake',
-                        'title' => 'Tender Support',
-                        'desc' => 'Professional logistics visualisation and strategic planning that gives your bids the winning edge.',
-                    ],
-                ]
-            ]
+            'content' => []
         ]);
 
         // 6. Seed Contact Section
